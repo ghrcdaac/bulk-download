@@ -1,0 +1,42 @@
+{
+  "name": "Earth Data Bulk Downloader",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "Extension Version 1.0",
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage",
+    "downloads",
+    "cookies",
+    "https://search.earthdata.nasa.gov/*",
+    "https://urs.earthdata.nasa.gov/*",
+    "https://cmr.earthdata.nasa.gov/search/*"
+  ],
+  "icons": {
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+  "browser_action": {
+    "default_popup": "html/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://search.earthdata.nasa.gov/*",
+        "https://urs.earthdata.nasa.gov/*",
+        "https://cmr.earthdata.nasa.gov/search/*"
+      ],
+      "js": [
+        "lib/jquery-3.4.1.js",
+        "js/content.js"
+      ]
+    }
+  ],
+  "background": {
+    "scripts": [
+      "js/bg.js"
+    ]
+  },
+  "content_security_policy": "script-src 'self'  ; object-src 'self'"
+}
