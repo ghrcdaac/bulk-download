@@ -2,7 +2,7 @@
   "name": "Earth Data Bulk Downloader",
   "version": "1.0",
   "manifest_version": 2,
-  "description": "Extension Version 1.0",
+  "description": "Extension Version 3.0",
   "permissions": [
     "tabs",
     "activeTab",
@@ -27,9 +27,12 @@
         "https://urs.earthdata.nasa.gov/*",
         "https://cmr.earthdata.nasa.gov/search/*"
       ],
+      "all_frames": true,
       "js": [
         "lib/jquery-3.4.1.js",
-        "js/content.js"
+        "lib/sweetalert.min.js",
+        "js/content.js",
+        "js/contentProject.js"
       ]
     }
   ],

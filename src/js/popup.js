@@ -1,38 +1,50 @@
 let bgPage = chrome.extension.getBackgroundPage(); //Getting the variables from the background page
-let number = bgPage.noOfEntries; //The number of entries in the CMR data page
-console.log(number);
 
-let downloadLinks = []; //Array to store all the links to download the granules
-let granuleFileName = []; //Array to save the file names of granules
+let idsOfDownload = [];
+idsOfDownload = bgPage.ids;
 
-//$('body').height(800);
-$('body').width(200); // Adjusting the width of the extension's popup window
+for (let i of idsOfDownload) {
+    console.log(i);
+}
 
+$('body').width(350); //increasing the page width of the popup window
 
-//Retrieving the data stored in the browser's local storage using the get method
-chrome.storage.local.get({
-        list: []
-    },
-    function (data) {
-        downloadLinks = data.list;
+//Creating Pause, Resume and Cancel All buttons
 
-        for (let i = 0; i < number; i++) {
-            granuleFileName[i] = downloadLinks[i].split('/')[7]; //getting the exact file name using split
-
-            //creating a new div element for each granule downloaded
-            let divElement = document.createElement('div');
-            divElement.innerHTML = '<div id="box' + i + '"  style="border: 1px solid #666; padding: 10px; background-color: #ccc;">' + granuleFileName[i] + '<br><button class="button"></button></div>';
-            document.body.appendChild(divElement);
-            console.log(granuleFileName[i]);
-
-            //appending a css made pause/play button to the above created div
-            let pausePlayButton = $(".button");
-            pausePlayButton.click(function () {
-                pausePlayButton.toggleClass("paused");
-                return false;
-            });
-
-        }
-
+let pause = document.createElement("BUTTON");
+document.body.appendChild(pause);
+pause.id = "pause";
+pause.className = "btn";
+$("#pause").html('<i class="fa fa-pause-circle"></i> Pause All</button>');
+$("#pause").click(function pause() {
+    console.log("Inside pause");
+    for (let i of idsOfDownload) {
+        chrome.downloads.pause(i);
     }
-);
+});
+
+let resume = document.createElement("BUTTON");   // Create a <button> element
+document.body.appendChild(resume);
+resume.id = "resume";
+resume.className = "btn";
+$("#resume").html('<i class="fa fa-play-circle"></i> Resume All</button> <br>');
+
+$("#resume").click(function resume() {
+    for (let i of idsOfDownload) {
+        chrome.downloads.resume(i);
+    }
+});
+
+let cancel = document.createElement("BUTTON");   // Create a <button> element
+document.body.appendChild(cancel);
+cancel.id = "cancel";
+cancel.className = "btn";
+$("#cancel").html('<i class="fa fa-stop-circle"></i> Cancel All</button>');
+$("#cancel").click(function cancel() {
+    for (let i of idsOfDownload) {
+        chrome.downloads.cancel(i);
+    }
+});
+
+
+

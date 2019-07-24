@@ -99,7 +99,7 @@ $(document).ready(function () {
         }
 
 
-        let buttonClass = jQuery(".master-overlay-main-content")[0];
+        let buttonClass = jQuery(".master-overlay-footer-actions")[0];
         let config = {
             childList: true,
             subtree: true,
@@ -109,7 +109,7 @@ $(document).ready(function () {
         let mutationObserverMain = new MutationObserver(function (mutations, mutationObserverMain) {
             mutations.forEach(function (mutation) {
                 let location = window.location.href;
-                let baseUrl = "https://search.earthdata.nasa.gov/search/granules?";
+                let baseUrl = "https://search.earthdata.nasa.gov/projects/";
 
                 //appends the Bulk Download button only if the baseURL matches and does not exist already
                 if (location.includes(baseUrl) && !document.getElementById("newBulkDownloadButton")) {
@@ -118,15 +118,14 @@ $(document).ready(function () {
                     let text = document.createTextNode("Bulk Download All");
                     button.appendChild(text);
                     button.id = "newBulkDownloadButton";
-                    button.className = "button retrieve master-overlay-info-tooltip-big";
-                    jQuery(".master-overlay-global-actions, .actions").append(button);
+                    button.className = "button button-full button-download-data";
                     let button1 = document.createElement("button");
                     button1.appendChild(text);
-                    jQuery(".button.button.button-full.button-download-data").append(button1);
+                    jQuery(".master-overlay-footer-actions").append(button);
 
                     //getting the granular data from the existing Download Now button
                     let noOfGranules = jQuery(".pill").first().text();
-                    $("#newBulkDownloadButton").html('<i class="fa fa-download"></i> Bulk Download All' + '<span class="pill">' + noOfGranules + '</span>');
+                    $("#newBulkDownloadButton").html('<i class="fa fa-download"></i> Bulk Download All');
 
 
                     let loginWindow = null;
