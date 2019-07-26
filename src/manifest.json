@@ -30,7 +30,7 @@
       "all_frames": true,
       "js": [
         "lib/jquery-3.4.1.js",
-        "lib/sweetalert.min.js",
+        "lib/sweetalert2.min.js",
         "js/content.js",
         "js/contentProject.js"
       ]

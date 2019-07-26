@@ -6,20 +6,38 @@ $(document).ready(function () {
 
         function getCmrFilters(url) {
             //Function to get CMR filter from EDS URL
+            let decodedUrl = decodeURIComponent(url);
+            function getUrlVars() {
+                let vars = {};
+                let parts = decodedUrl.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                    vars[key] = value;
+                });
+                return vars;
+            }
+
+           // console.log("DecodedURL:" , decodedUrl);
             let filter = {};
-            let conceptId = "p=(.*?)&";
-            let startDate = "pg\\[0\\]\\[qt\\]=(\\d{4}-\\d{2}-\\d{2})\\T(\\d{2})\\%3A(\\d{2})\\%3A(\\d{2})";
-            let stopDate = "pg\\[0\\]\\[qt\\]=.*(\\d{4}-\\d{2}-\\d{2})\\T(\\d{2})\\%3A(\\d{2})\\%3A(\\d{2})";
-            filter['concept_id'] = "?collection_concept_id=" + url.match(conceptId)[1];
+            let conceptId = getUrlVars()["p"];
+            let temporal = getUrlVars()["pg[0][qt]"];
+            let polygon = getUrlVars()["polygon"];
+            let rectangle = getUrlVars()["sb"];
+            let point = getUrlVars()["sp"];
+            filter['concept_id'] = "?collection_concept_id=" + conceptId;
             filter['temporal'] = "&temporal[]=";
-            if (url.match(startDate)) {
-                filter['temporal'] = filter['temporal'] + url.match(startDate)[1] + "T" + url.match(startDate)[2] + ":" + url.match(startDate)[3] + ":" + url.match(startDate)[4] + "Z";
-            }
+            filter['polygon'] = "&polygon=";
+            filter['rectangle'] = "&bounding_box=";
+            filter['point'] = "&point=";
 
-            if (url.match(stopDate)) {
+            if (temporal)
+                filter['temporal'] = filter['temporal'] + temporal;
+            if (polygon)
+                filter['polygon'] = "&polygon=" + polygon;
+            if (rectangle)
+                filter['rectangle'] = "&bounding_box=" + rectangle;
+            if (point)
+                filter['point'] = "&point=" + point;
 
-                filter['temporal'] = filter['temporal'] + "," + url.match(stopDate)[1] + "T" + url.match(stopDate)[2] + ":" + url.match(stopDate)[3] + ":" + url.match(stopDate)[4] + "Z";
-            }
+            //console.log("Filters:" , filter);
 
             return filter;
         }
@@ -29,12 +47,38 @@ $(document).ready(function () {
             let filter = getCmrFilters(url);
             let baseUrl = "https://cmr.earthdata.nasa.gov/search/granules.json";
 
-            return (baseUrl + filter['concept_id'] + filter['temporal'] + "&page_size=700&page_num=");
+            return (baseUrl + filter['concept_id'] + filter['polygon'] + filter['rectangle'] + filter['point'] + filter['temporal'] + "&page_size=700&page_num=");
+        }
+
+        function downloadPopUp(){
+            let timerInterval;
+            swal.fire({
+                title: 'Fetching Downloads from CMR!',
+                html: 'I will close in <strong></strong> seconds.',
+                timer: 2000,
+                onBeforeOpen: () => {
+                    swal.showLoading();
+                    timerInterval = setInterval(() => {
+                        swal.getContent().querySelector('strong')
+                            .textContent = swal.getTimerLeft()
+                    }, 100)
+                },
+                onClose: () => {
+                    clearInterval(timerInterval)
+                }
+            }).then((result) => {
+                if (
+                    // Read more about handling dismissals
+                    result.dismiss === swal.DismissReason.timer
+                ) {
+                    console.log('I was closed by the timer')
+                }
+            })
         }
 
         function download() {
 
-            console.log("Inside cookie checking");
+
             let url = window.location.href;
             let cmrUrl = getCmrQueryLink(url);
             let numberOfGranules = jQuery(".pill").first().text();
@@ -49,7 +93,7 @@ $(document).ready(function () {
             let cmrUrlPaging;
 
             do {
-                console.log("Inside do while");
+
                 cmrUrlPaging = cmrUrl + [i];
                 console.log(cmrUrlPaging);
 
@@ -59,18 +103,19 @@ $(document).ready(function () {
                     .then(res => res.json())
                     .then((out) => {
 
-                        console.log('Checkout this JSON! ', out);
+                        //console.log('Checkout this JSON! ', out);
 
                         let entries = out['feed']['entry'];
-                        console.error(entries.length);
+                        //console.error(entries.length);
                         numberOfEntries = entries.length;
                         if (numberOfEntries === 0) {
-                            //alert("No granules");
-                            swal("Empty Dataset", "Common Metadata Repository returned no granules for this search query. Please contact Earthdata help desk", "error");
+                            swal.fire("Empty Dataset", "Common Metadata Repository returned no granules for this search query. Please contact Earthdata help desk", "error");
                         }
+                        else
+                            downloadPopUp();
 
                         window.granulesFetched = window.granulesFetched + numberOfEntries;
-                        console.log(granulesFetched);
+                        //console.log(granulesFetched);
                         setTimeout(function () {
                             for (let i = 0; i < numberOfEntries; i++) {
                                 downloadLink[i] = out.feed.entry[i].links[0].href; //filters all the download links
@@ -148,6 +193,7 @@ $(document).ready(function () {
                                 }
                             }, 2000);
                         } else {
+
                             download();
                         }
                     });
@@ -165,7 +211,7 @@ $(document).ready(function () {
                 //To check the change in number of granules
                 let mutationObserver = new MutationObserver(function (mutations, mutationObserver) {
                     mutations.forEach(function (mutation) {
-                        console.log("There is a Mutation in Granules");
+                       // console.log("There is a Mutation in Granules");
                         if (document.getElementById("newBulkDownloadButton")) {
                             let noOfGranules = jQuery(".pill").first().text();
                             $("#newBulkDownloadButton").html('<i class="fa fa-download"></i> Bulk Download All ' +

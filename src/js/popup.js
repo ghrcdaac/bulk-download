@@ -17,7 +17,7 @@ pause.id = "pause";
 pause.className = "btn";
 $("#pause").html('<i class="fa fa-pause-circle"></i> Pause All</button>');
 $("#pause").click(function pause() {
-    console.log("Inside pause");
+
     for (let i of idsOfDownload) {
         chrome.downloads.pause(i);
     }

@@ -66,7 +66,7 @@ $(document).ready(function () {
                         numberOfEntries = entries.length;
                         if (numberOfEntries === 0) {
                             //alert("No granules");
-                            swal("Empty Dataset", "Common Metadata Repository returned no granules for this search query. Please contact Earthdata help desk", "error");
+                            Swal.fire("Empty Dataset", "Common Metadata Repository returned no granules for this search query. Please contact Earthdata help desk", "error");
                         }
 
                         window.granulesFetched = window.granulesFetched + numberOfEntries;
@@ -134,21 +134,7 @@ $(document).ready(function () {
 
                     $("#newBulkDownloadButton").click(function openWin() {
 
-                        //Pops up the urs login window if the user is already not logged in
-                        if (!document.cookie.match(/^.*urs_user_already_logged=yes.*$/)) {
-                            loginWindow = window.open('https://urs.earthdata.nasa.gov/', loginWindow, 'width=600,height=600');
-
-                            let loginInterval = window.setInterval(function () {
-                                if (document.cookie.match(/^.*urs_user_already_logged=yes.*$/)) {
-                                    loginWindow.close();
-                                    clearInterval(loginInterval);
-                                    // alert("download");
-                                    download();
-                                }
-                            }, 2000);
-                        } else {
-                            download();
-                        }
+                        swal.fire("Developing Phase", "This is a work in progress and download functionality for this button is currently not implemented", "error");
                     });
                 }
 

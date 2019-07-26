@@ -24,8 +24,8 @@ function receiver(request, sender, sendResponse) {
 
     downloadLinks = request.text;
     noOfEntries = request.number;
-    console.log(noOfEntries);
-    console.log(downloadLinks[0]);
+    //console.log(noOfEntries);
+    //console.log(downloadLinks[0]);
     let i;
 
     chrome.storage.local.clear();
@@ -35,7 +35,7 @@ function receiver(request, sender, sendResponse) {
         }); //Chrome's downloads API easily downloads all the granules
     }
 
-    console.log(ids);
+    //console.log(ids);
 
     //This links are stored in local storage so that these can be shown in the popup even after the browser is re-opened.
 
