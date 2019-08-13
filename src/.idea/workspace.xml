@@ -2,18 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d427fb71-5441-41fe-a64f-65a830f3d2f0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.idea/chrome-firefox-extension.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/html/popup.html" beforeDir="false" afterPath="$PROJECT_DIR$/html/popup.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/bg.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/bg.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/content.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/content.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/contentProject.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/contentProject.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/popup.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/popup.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/manifest.json" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -29,19 +19,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/content.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2187">
-              <caret line="54" column="8" selection-start-line="54" selection-start-column="8" selection-end-line="54" selection-end-column="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/bg.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-243">
-              <folding>
-                <element signature="n#!!doc" expanded="true" />
-              </folding>
+            <state relative-caret-position="804">
+              <caret line="235" column="23" lean-forward="true" selection-start-line="211" selection-start-column="16" selection-end-line="235" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -49,7 +28,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/bg.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="543">
+            <state relative-caret-position="2052">
               <caret line="76" column="44" selection-start-line="76" selection-start-column="44" selection-end-line="76" selection-end-column="44" />
             </state>
           </provider>
@@ -64,7 +43,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/popup.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="669">
@@ -73,19 +52,12 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/popup.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="669">
-              <caret line="48" column="44" lean-forward="true" selection-start-line="47" selection-start-column="8" selection-end-line="48" selection-end-column="44" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/contentProject.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1377" />
+            <state relative-caret-position="2572">
+              <caret line="147" column="36" lean-forward="true" selection-start-line="147" selection-start-column="36" selection-end-line="147" selection-end-column="36" />
+            </state>
           </provider>
         </entry>
       </file>
@@ -137,11 +109,11 @@
         <option value="$PROJECT_DIR$/lib/sweetalert2.min.js" />
         <option value="$PROJECT_DIR$/../../../bulk-download-master@dd8331ec68b 2/bulk-download-master@dd8331ec68b/src/js/content.js" />
         <option value="$USER_HOME$/chrome-firefox-extension/src 1.0/js/contentProject.js" />
-        <option value="$PROJECT_DIR$/js/contentProject.js" />
-        <option value="$PROJECT_DIR$/js/content.js" />
         <option value="$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/content.js" />
         <option value="$PROJECT_DIR$/js/bg.js" />
         <option value="$PROJECT_DIR$/js/popup.js" />
+        <option value="$PROJECT_DIR$/js/content.js" />
+        <option value="$PROJECT_DIR$/js/contentProject.js" />
       </list>
     </option>
   </component>
@@ -161,33 +133,18 @@
         <subPane>
           <expand>
             <path>
-              <item name="src 1.0" type="b2602c69:ProjectViewProjectNode" />
-              <item name="src 1.0" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="b2602c69:ProjectViewProjectNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="src 1.0" type="b2602c69:ProjectViewProjectNode" />
-              <item name="src 1.0" type="462c0819:PsiDirectoryNode" />
-              <item name="css" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="src 1.0" type="b2602c69:ProjectViewProjectNode" />
-              <item name="src 1.0" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="b2602c69:ProjectViewProjectNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="html" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="src 1.0" type="b2602c69:ProjectViewProjectNode" />
-              <item name="src 1.0" type="462c0819:PsiDirectoryNode" />
-              <item name="images" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="src 1.0" type="b2602c69:ProjectViewProjectNode" />
-              <item name="src 1.0" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="b2602c69:ProjectViewProjectNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="js" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="src 1.0" type="b2602c69:ProjectViewProjectNode" />
-              <item name="src 1.0" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -233,17 +190,18 @@
       <workItem from="1565542786959" duration="5527000" />
       <workItem from="1565572315324" duration="4004000" />
       <workItem from="1565627402670" duration="4101000" />
+      <workItem from="1565713059191" duration="1871000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="86470000" />
+    <option name="totallyTimeSpent" value="88341000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15506329" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.09546413" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -288,6 +246,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../../../bulk-download-master@dd8331ec68b 2/bulk-download-master@dd8331ec68b/src/js/content.js" />
     <entry file="file://$USER_HOME$/chrome-firefox-extension/src 1.0/js/contentProject.js" />
+    <entry file="file://$PROJECT_DIR$/../../../src 1.0/js/contentProject.js" />
+    <entry file="file://$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/content.js" />
+    <entry file="file://$PROJECT_DIR$/lib/sweetalert2.min.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="27">
+          <caret line="1" column="24870" selection-start-line="1" selection-start-column="24870" selection-end-line="1" selection-end-column="24870" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/contentProject.js" />
+    <entry file="file://$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/bg.js" />
+    <entry file="file://$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/popup.js" />
+    <entry file="file://$PROJECT_DIR$/js/bg.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2052">
+          <caret line="76" column="44" selection-start-line="76" selection-start-column="44" selection-end-line="76" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/html/popup.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="297">
@@ -298,6 +275,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/js/popup.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="669">
+          <caret line="60" column="10" selection-start-line="60" selection-start-column="10" selection-end-line="60" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/manifest.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="837">
@@ -305,71 +289,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../src 1.0/js/contentProject.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2268" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/content.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="179" column="25" selection-start-line="179" selection-start-column="25" selection-end-line="179" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/sweetalert2.min.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="27">
-          <caret line="1" column="24870" selection-start-line="1" selection-start-column="24870" selection-end-line="1" selection-end-column="24870" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/contentProject.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="117" column="29" lean-forward="true" selection-start-line="117" selection-start-column="29" selection-end-line="117" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/js/content.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2187">
-          <caret line="54" column="8" selection-start-line="54" selection-start-column="8" selection-end-line="54" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/bg.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-243">
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
+        <state relative-caret-position="804">
+          <caret line="235" column="23" lean-forward="true" selection-start-line="211" selection-start-column="16" selection-end-line="235" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/js/contentProject.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1377" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/Documents/Appening Button/chrome-firefox-extension/src 1.0/js/popup.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="669">
-          <caret line="48" column="44" lean-forward="true" selection-start-line="47" selection-start-column="8" selection-end-line="48" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/bg.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="543">
-          <caret line="76" column="44" selection-start-line="76" selection-start-column="44" selection-end-line="76" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/popup.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="669">
-          <caret line="60" column="10" selection-start-line="60" selection-start-column="10" selection-end-line="60" selection-end-column="10" />
+        <state relative-caret-position="2572">
+          <caret line="147" column="36" lean-forward="true" selection-start-line="147" selection-start-column="36" selection-end-line="147" selection-end-column="36" />
         </state>
       </provider>
     </entry>

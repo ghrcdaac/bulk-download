@@ -62,6 +62,7 @@ $(document).ready(function () {
         let downloadPopUp = swal.fire({
             title: 'Fetching download links from Earthdata CMR',
             showConfirmButton: false,
+            timer: 3000
         });
 
         let url = window.location.href;
@@ -94,7 +95,7 @@ $(document).ready(function () {
                             downloadLink[i] = out.feed.entry[i].links[0].href; //filters all the download links
                         }
 
-                        downloadPopUp.close();
+                        //downloadPopUp.close();
 
                         chrome.runtime.sendMessage({
                             links: downloadLink,
@@ -139,20 +140,35 @@ $(document).ready(function () {
 
             $("#newBulkDownloadButton").click(function openWin() {
 
-                //swal.fire("Developing Phase", "This is a work in progress and download functionality for this button is currently not implemented", "error");
-                //Pops up the urs login window if the user is already not logged in
-                if (!document.cookie.match(/^.*urs_user_already_logged=yes.*$/)) {
-                    loginWindow = window.open('https://urs.earthdata.nasa.gov/', loginWindow, 'width=600,height=600');
 
-                    let loginInterval = window.setInterval(function () {
-                        if (document.cookie.match(/^.*urs_user_already_logged=yes.*$/)) {
-                            loginWindow.close();
-                            clearInterval(loginInterval);
+                //Pops up the urs login window if the user is already not logged in
+
+
+                fetch("https://urs.earthdata.nasa.gov/profile")
+                    .then((out) => {
+
+                        //Pops up the urs login window if the user is already not logged in
+                        if (out.url === "https://urs.earthdata.nasa.gov/home" && out.redirected === true) {
+                            loginWindow = window.open('https://urs.earthdata.nasa.gov/', loginWindow, 'width=600,height=600');
+
+                            let loginInterval = window.setInterval(function () {
+
+                                if (document.cookie.match(/^.*urs_user_already_logged=yes.*$/)) {
+                                    loginWindow.close();
+                                    clearInterval(loginInterval);
+                                    download();
+                                }
+                            }, 1000);
+                        }
+                        else {
                             download();
                         }
-                    }, 2000);
-                } else
-                    download();
+
+                    })
+                    .catch(err => {
+                        console.error("Error in fetching Logged in status");
+                        throw err
+                    });
             });
         }
     }

@@ -145,7 +145,7 @@ $(document).ready(function () {
                             number: numberOfEntries,
                             message: "start-download",
                         });
-                        downloadPopUp.close();
+
 
                     })
                     .catch(err => {
@@ -223,7 +223,7 @@ $(document).ready(function () {
                                     clearInterval(loginInterval);
                                     downloadFiles();
                                 }
-                            }, 2000);
+                            }, 1000);
                         }
                         else {
                             downloadFiles();
