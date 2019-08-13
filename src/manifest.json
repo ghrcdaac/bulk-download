@@ -8,11 +8,14 @@
     "activeTab",
     "storage",
     "downloads",
+    "downloads.open",
+    "identity",
     "cookies",
-    "https://search.earthdata.nasa.gov/*",
-    "https://urs.earthdata.nasa.gov/*",
-    "https://cmr.earthdata.nasa.gov/search/*"
+    "alarms",
+    "https://*/",
+    "http://*/"
   ],
+  "web_accessible_resources": ["/images/*"],
   "icons": {
     "48": "images/icon48.png",
     "128": "images/icon128.png"
@@ -29,8 +32,11 @@
       ],
       "all_frames": true,
       "js": [
+        "lib/download.js",
+        "lib/lz-string.js",
         "lib/jquery-3.4.1.js",
         "lib/sweetalert2.min.js",
+        "lib/ua-parser.min.js",
         "js/content.js",
         "js/contentProject.js"
       ]
@@ -38,6 +44,8 @@
   ],
   "background": {
     "scripts": [
+      "lib/lz-string.js",
+      "lib/ua-parser.min.js",
       "js/bg.js"
     ]
   },

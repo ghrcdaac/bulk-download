@@ -1,169 +1,173 @@
 console.log("Earth Data Bulk Downloader Extension has been set up!");
 
-
 $(document).ready(function () {
-    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
-        function getCmrFilters(url) {
-            //Function to get CMR filter from EDS URL
-            let filter = {};
-            let conceptId = "p=(.*?)&";
-            let startDate = "pg\\[0\\]\\[qt\\]=(\\d{4}-\\d{2}-\\d{2})\\T(\\d{2})\\%3A(\\d{2})\\%3A(\\d{2})";
-            let stopDate = "pg\\[0\\]\\[qt\\]=.*(\\d{4}-\\d{2}-\\d{2})\\T(\\d{2})\\%3A(\\d{2})\\%3A(\\d{2})";
-            filter['concept_id'] = "?collection_concept_id=" + url.match(conceptId)[1];
-            filter['temporal'] = "&temporal[]=";
-            if (url.match(startDate)) {
-                filter['temporal'] = filter['temporal'] + url.match(startDate)[1] + "T" + url.match(startDate)[2] + ":" + url.match(startDate)[3] + ":" + url.match(startDate)[4] + "Z";
-            }
+    function getCmrFilters(url) {
+        //Function to get CMR filter from EDS URL
+        let decodedUrl = decodeURIComponent(url);
 
-            if (url.match(stopDate)) {
-
-                filter['temporal'] = filter['temporal'] + "," + url.match(stopDate)[1] + "T" + url.match(stopDate)[2] + ":" + url.match(stopDate)[3] + ":" + url.match(stopDate)[4] + "Z";
-            }
-
-            return filter;
+        function getUrlVars() {
+            let vars = {};
+            let parts = decodedUrl.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = value;
+            });
+            return vars;
         }
 
-        function getCmrQueryLink(url) {
-            // Function to get CMR link with appropriate filter
-            let filter = getCmrFilters(url);
-            let baseUrl = "https://cmr.earthdata.nasa.gov/search/granules.json";
-
-            return (baseUrl + filter['concept_id'] + filter['temporal'] + "&page_size=700&page_num=");
+        let filter = [];
+        let allConceptIds = getUrlVars()["p"];
+        let conceptId = [];
+        conceptId = jQuery.unique(allConceptIds.split("!"));
+        let noOfDatasets = conceptId.length;
+        let temporal = [];
+        for (let i = 1; i <= noOfDatasets; i++)
+            temporal[i - 1] = getUrlVars()["pg[" + i + "][qt]"];
+        let polygon = getUrlVars()["polygon"];
+        let rectangle = getUrlVars()["sb"];
+        let point = getUrlVars()["sp"];
+        for (let i = 0; i < noOfDatasets; i++) {
+            filter[i] = {};
+            filter[i]['temporal'] = "&temporal[]=";
+            filter[i]['polygon'] = "&polygon=";
+            filter[i]['rectangle'] = "&bounding_box=";
+            filter[i]['point'] = "&point=";
+            filter[i]['concept_id'] = "?collection_concept_id=" + conceptId[i];
+            if (temporal[i])
+                filter[i]['temporal'] = "&temporal[]=" + temporal[i];
+            if (polygon)
+                filter[i]['polygon'] = "&polygon=" + polygon;
+            if (rectangle)
+                filter[i]['rectangle'] = "&bounding_box=" + rectangle;
+            if (point)
+                filter[i]['point'] = "&point=" + point;
         }
 
-        function download() {
+        return filter;
+    }
 
-            console.log("Inside cookie checking");
-            let url = window.location.href;
-            let cmrUrl = getCmrQueryLink(url);
-            let numberOfGranules = jQuery(".pill").first().text();
-            let numberOfGranulesString = [];
-            numberOfGranulesString = numberOfGranules.split(" ");
-            let noOfGranules = 0;
-            if (numberOfGranulesString[0].includes(",")) noOfGranules = parseInt(numberOfGranulesString[0].replace(/,/g, ""));
-            else noOfGranules = parseInt(numberOfGranulesString[0]);
-            window.granulesFetched = 0;
-            let i = 1;
-            let numberOfEntries = 0;
-            let cmrUrlPaging;
+    function getCmrQueryLink(url) {
+        // Function to get CMR link with appropriate filter
+        let filter = [];
+        filter = getCmrFilters(url);
+        let noOfDatasets = filter.length;
+        let baseUrl = "https://cmr.earthdata.nasa.gov/search/granules.json";
+        let urls = [];
+        for (let i = 0; i < noOfDatasets; i++) {
+            urls[i] = baseUrl + filter[i]['concept_id'] + filter[i]['polygon'] + filter[i]['rectangle'] + filter[i]['point'] + filter[i]['temporal'] + "&page_size=700&page_num=";
+        }
+        return urls;
+    }
 
+    function download() {
+        let downloadPopUp = swal.fire({
+            title: 'Fetching download links from Earthdata CMR',
+            showConfirmButton: false,
+        });
+
+        let url = window.location.href;
+        let cmrUrls = [];
+        cmrUrls = getCmrQueryLink(url);
+        let noOfDatasets = cmrUrls.length;
+
+        window.numberOfEntries = 0;
+        let cmrUrlPaging = [];
+        for (let i = 0; i < noOfDatasets; i++) {
+            let page = 1;
             do {
-                console.log("Inside do while");
-                cmrUrlPaging = cmrUrl + [i];
-                console.log(cmrUrlPaging);
+                cmrUrlPaging[i] = cmrUrls[i] + page;
+                console.log(cmrUrlPaging[i]);
 
                 let downloadLink = [];
 
-                fetch(cmrUrlPaging)
+                fetch(cmrUrlPaging[i])
                     .then(res => res.json())
                     .then((out) => {
 
-                        console.log('Checkout this JSON! ', out);
-
                         let entries = out['feed']['entry'];
-                        console.error(entries.length);
+
                         numberOfEntries = entries.length;
                         if (numberOfEntries === 0) {
-                            //alert("No granules");
-                            Swal.fire("Empty Dataset", "Common Metadata Repository returned no granules for this search query. Please contact Earthdata help desk", "error");
+                            swal.fire("Empty Dataset", "Earthdata CMR returned no granules for this search query. Please contact Earthdata Help Desk", "error");
                         }
 
-                        window.granulesFetched = window.granulesFetched + numberOfEntries;
-                        console.log(granulesFetched);
-                        setTimeout(function () {
-                            for (let i = 0; i < numberOfEntries; i++) {
-                                downloadLink[i] = out.feed.entry[i].links[0].href; //filters all the download links
-                                //console.log(downloadLink[i]);
-                            }
+                        for (let i = 0; i < numberOfEntries; i++) {
+                            downloadLink[i] = out.feed.entry[i].links[0].href; //filters all the download links
+                        }
 
-                            let message = {
-                                text: downloadLink,
-                                number: numberOfEntries
-                            };
+                        downloadPopUp.close();
 
+                        chrome.runtime.sendMessage({
+                            links: downloadLink,
+                            number: numberOfEntries,
+                            message: "start-download",
+                        }); //send the download links as message to background page
 
-                            chrome.runtime.sendMessage(message); //send the download links as message to background page
-                        }, 1000);
                     })
                     .catch(err => {
-                        console.error("Error in fetching");
+                        console.error("Error in fetching download links");
                         throw err
                     });
 
-                granulesFetched = granulesFetched + 700;
-                i++;
+                page++;
 
-            } while (granulesFetched < noOfGranules);
-
+            } while (numberOfEntries !== 0);
         }
 
+    }
 
-        let buttonClass = jQuery(".master-overlay-footer-actions")[0];
-        let config = {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            characterData: true
-        };
-        let mutationObserverMain = new MutationObserver(function (mutations, mutationObserverMain) {
-            mutations.forEach(function (mutation) {
-                let location = window.location.href;
-                let baseUrl = "https://search.earthdata.nasa.gov/projects/";
+    function appendBulkDownloadButton() {
+        let location = window.location.href;
+        let baseUrl = "https://search.earthdata.nasa.gov/projects/";
 
-                //appends the Bulk Download button only if the baseURL matches and does not exist already
-                if (location.includes(baseUrl) && !document.getElementById("newBulkDownloadButton")) {
-                    //creates a new button element and the same class name is given as the existing Download Now Button
-                    let button = document.createElement("button");
-                    let text = document.createTextNode("Bulk Download All");
-                    button.appendChild(text);
-                    button.id = "newBulkDownloadButton";
-                    button.className = "button button-full button-download-data";
-                    let button1 = document.createElement("button");
-                    button1.appendChild(text);
-                    jQuery(".master-overlay-footer-actions").append(button);
+        //appends the Bulk Download button only if the baseURL matches and does not exist already
+        if (location.includes(baseUrl) && !document.getElementById("newBulkDownloadButton")) {
+            //creates a new button element and the same class name is given as the existing Download Now Button
+            let button = document.createElement("button");
+            let text = document.createTextNode("Bulk Download All");
+            button.appendChild(text);
+            button.id = "newBulkDownloadButton";
+            button.className = "button button-full button-download-data";
+            $(".master-overlay-footer-actions").append(button);
 
-                    //getting the granular data from the existing Download Now button
-                    let noOfGranules = jQuery(".pill").first().text();
-                    $("#newBulkDownloadButton").html('<i class="fa fa-download"></i> Bulk Download All');
+            document.getElementById("newBulkDownloadButton").style = "background:#2b7fb9; margin-top: 5px;";
+
+            //getting the granular data from the existing Download Now button
+            $("#newBulkDownloadButton").html('<i class="fa fa-download"></i> Bulk Download All');
 
 
-                    let loginWindow = null;
-                    //window.contentScriptInjected = false;
-                    //Function when there is a click on the New Bulk Download button
+            //Function for a click listener on the New Bulk Download button
 
-                    $("#newBulkDownloadButton").click(function openWin() {
+            $("#newBulkDownloadButton").click(function openWin() {
 
-                        swal.fire("Developing Phase", "This is a work in progress and download functionality for this button is currently not implemented", "error");
-                    });
-                }
+                //swal.fire("Developing Phase", "This is a work in progress and download functionality for this button is currently not implemented", "error");
+                //Pops up the urs login window if the user is already not logged in
+                if (!document.cookie.match(/^.*urs_user_already_logged=yes.*$/)) {
+                    loginWindow = window.open('https://urs.earthdata.nasa.gov/', loginWindow, 'width=600,height=600');
 
-                let granulesMutation = jQuery(".pill")[0];
-
-                let config = {
-                    childList: true,
-                    subtree: true,
-                    attributes: true,
-                    characterData: true
-                };
-
-                //To check the change in number of granules
-                let mutationObserver = new MutationObserver(function (mutations, mutationObserver) {
-                    mutations.forEach(function (mutation) {
-                        console.log("There is a Mutation in Granules");
-                        if (document.getElementById("newBulkDownloadButton")) {
-                            let noOfGranules = jQuery(".pill").first().text();
-                            $("#newBulkDownloadButton").html('<i class="fa fa-download"></i> Bulk Download All ' +
-                                '<span class="pill" >' + noOfGranules + '</span>');
+                    let loginInterval = window.setInterval(function () {
+                        if (document.cookie.match(/^.*urs_user_already_logged=yes.*$/)) {
+                            loginWindow.close();
+                            clearInterval(loginInterval);
+                            download();
                         }
-                    });
-                });
-
-                mutationObserver.observe(granulesMutation, config); //Observes the mutation
+                    }, 2000);
+                } else
+                    download();
             });
-        });
-        mutationObserverMain.observe(buttonClass, config);
+        }
+    }
+
+    function addMutation() {
+
+        if ($(".master-overlay-footer-actions").find(".button-full").length === 1) {
+            clearInterval(interval);
+            appendBulkDownloadButton();
+
+        }
+    }
+
+    let interval = setInterval(addMutation, 1000);
 
 
-    });
+
 });

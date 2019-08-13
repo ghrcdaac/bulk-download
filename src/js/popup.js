@@ -1,50 +1,67 @@
 let bgPage = chrome.extension.getBackgroundPage(); //Getting the variables from the background page
 
 let idsOfDownload = [];
-idsOfDownload = bgPage.ids;
-
-for (let i of idsOfDownload) {
-    console.log(i);
-}
-
-$('body').width(350); //increasing the page width of the popup window
-
-//Creating Pause, Resume and Cancel All buttons
-
-let pause = document.createElement("BUTTON");
-document.body.appendChild(pause);
+idsOfDownload = bgPage.downloadIds;
+console.log(idsOfDownload);
+/*let pause = document.createElement("button");
 pause.id = "pause";
 pause.className = "btn";
-$("#pause").html('<i class="fa fa-pause-circle"></i> Pause All</button>');
-$("#pause").click(function pause() {
-
-    for (let i of idsOfDownload) {
-        chrome.downloads.pause(i);
-    }
-});
-
-let resume = document.createElement("BUTTON");   // Create a <button> element
-document.body.appendChild(resume);
+pause.innerHTML ='<i class="fa fa-pause-circle"></i> Pause All</button>';
+document.body.appendChild(pause);
+ 
+let resume = document.createElement("button");
 resume.id = "resume";
 resume.className = "btn";
-$("#resume").html('<i class="fa fa-play-circle"></i> Resume All</button> <br>');
-
-$("#resume").click(function resume() {
-    for (let i of idsOfDownload) {
-        chrome.downloads.resume(i);
-    }
-});
-
-let cancel = document.createElement("BUTTON");   // Create a <button> element
-document.body.appendChild(cancel);
+resume.innerHTML='<i class="fa fa-play-circle"></i> Resume All</button> <br>';
+resume.display = "none";
+document.body.appendChild(resume); */
+ 
+let cancel = document.createElement("button");
 cancel.id = "cancel";
 cancel.className = "btn";
-$("#cancel").html('<i class="fa fa-stop-circle"></i> Cancel All</button>');
-$("#cancel").click(function cancel() {
-    for (let i of idsOfDownload) {
-        chrome.downloads.cancel(i);
+cancel.innerHTML='<i class="fa fa-stop-circle"></i> Cancel All</button>';
+document.body.appendChild(cancel);
+
+$('body').width(350); 
+
+setInterval(function(){
+
+	let downloadString = LZString.decompress(localStorage.getItem('downloadLinks'));
+
+    if(downloadString === "") return;
+
+    let downloadLinks =  JSON.parse(downloadString);
+
+    if (downloadLinks !== undefined && downloadLinks !== null && downloadLinks !== "null") {
+        let status = `Total pending download: ${downloadLinks.length}`;
+        jQuery("#download-status").html(status);
     }
+    if(downloadLinks.length===0){
+        //$(pause).hide();
+        //$(resume).hide();
+        $(cancel).hide();
+    }else{
+       // $(pause).show();
+        //$(resume).show();
+        $(cancel).show();
+    }
+},1000);
+
+
+/*
+$(pause).click(function() {
+    chrome.runtime.sendMessage({"message": "pause-download"});
 });
+
+$(resume).click(function () {
+    chrome.runtime.sendMessage({"message": "start-download"});
+}); */
+
+$(cancel).click(function () {
+    chrome.runtime.sendMessage({message: "cancel-download"});
+});
+
+
 
 
 

@@ -1,46 +1,198 @@
-//sending a dummy message to activate the onMessage Listener of Content Script
-//chrome.tabs.sendMessage(tab.id, "hello");
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (changeInfo.status == 'complete') {
-        chrome.tabs.query({active: true}, function (tabs) {
-            const msg = "Hello from background";
-            chrome.tabs.sendMessage(tab.id, "hello");
+let parser = new UAParser();
 
-        })
-    }
-});
-
-//onMessage listener to receive the array of download links
-//Chrome's downloads API works only in background page of extension and not in the content script
-
-chrome.runtime.onMessage.addListener(receiver);
-
-let downloadLinks = []; //Array to save each message from content script
-window.noOfEntries = 0;
-window.ids = [];
-
-//message from content script is received in the first argument of the receiver function i.e. request
-function receiver(request, sender, sendResponse) {
-
-    downloadLinks = request.text;
-    noOfEntries = request.number;
-    //console.log(noOfEntries);
-    //console.log(downloadLinks[0]);
-    let i;
-
-    chrome.storage.local.clear();
-    for (i of downloadLinks) {
-        chrome.downloads.download({url: i}, function (downloadId) {
-            ids.push(downloadId);
-        }); //Chrome's downloads API easily downloads all the granules
-    }
-
-    //console.log(ids);
-
-    //This links are stored in local storage so that these can be shown in the popup even after the browser is re-opened.
-
+if (parser.getBrowser().name === "Firefox") {
+    chrome = browser;
 }
 
+let init = false;
+window.isInit = function () {
+    return init;
+};
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    chrome.tabs.query({active: true}, function (tabs) {
+    })
+});
+
+window.downloadIds = [];
+let downloadLinks = [];
+let senderWindow = null;
+
+let downloaderPopupId = null;
+
+function createPopupDownloader() {
+    let downloaderPopup = chrome.windows.create({
+            url: chrome.runtime.getURL("html/downloader.html"),
+            type: "popup",
+            // height: 10,
+            //  width: 10,
+            state: "minimized"
+        },
+        function (windowInfo) {
+            downloaderPopupId = windowInfo.id;
+            // chrome.runtime.sendMessage({ message: "begin-download" });
+        }
+    );
+
+    chrome.windows.onRemoved.addListener((windowId) => {
+        if (downloaderPopupId == windowId) {
+            downloaderPopupId = null;
+        }
+    });
+}
+
+function getUrl(data, strFileName, strMimeType) {
+
+    var self = window, // this script is only for browsers anyway...
+        defaultMime = "application/octet-stream", // this default mime also triggers iframe downloads
+        mimeType = strMimeType || defaultMime,
+        payload = data,
+        toString = function (a) {
+            return String(a);
+        },
+        myBlob = (self.Blob || self.MozBlob || self.WebKitBlob || toString),
+        blob,
+        myBlob = myBlob.call ? myBlob.bind(self) : Blob;
+
+
+    blob = payload instanceof myBlob ?
+        payload :
+        new myBlob([payload], {type: mimeType});
+
+    if (self.URL) { // simple fast and modern way using Blob and URL:
+        return self.URL.createObjectURL(blob);
+    }
+
+    return false;
+}
+
+let interval = null;
+let blobURL = null;
+let startDownload = function () {
+
+    interval = setInterval(function () {
+
+        let downloadLinks = JSON.parse(LZString.decompress(localStorage.getItem('downloadLinks')));
+
+        if (downloadLinks !== undefined && downloadLinks !== null && downloadLinks !== "null" && downloadLinks.length !== 0) {
+
+            downloadLink = downloadLinks.shift();
+            localStorage.setItem('downloadLinks', LZString.compress(JSON.stringify(downloadLinks)));
+
+            if (downloadLink !== undefined) {
+
+                let x = new XMLHttpRequest();
+                x.open("POST", downloadLink, true);
+                x.responseType = 'blob';
+
+                let filename = downloadLink.substring(downloadLink.lastIndexOf('/') + 1);
+
+                x.onload = function (e) {
+
+                    blobURL = getUrl(x.response, filename);
+                    
+                    console.log(`Downloading ${blobURL}`);
+
+                    chrome.downloads.download({
+                        url: blobURL,
+                        filename: filename,
+                    }, function (downloadId) {                    
+                        downloadIds[downloadId] = blobURL;
+                    });
+
+
+                };
+                x.send();
+            }
+
+        } else {
+            clearInterval(interval);
+        }
+
+    }, 1000);
+
+};
+
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    senderWindow = sender;
+    request.message = request.message.toLowerCase();
+    if (typeof (request) === "object") {
+        if (request.message == "start-download") {
+
+            init = true;
+
+            if (request.links !== undefined) {
+
+                cmrLinks = request.links;
+
+                let downloadLinks = [];
+
+                try {
+                    downloadLinks = JSON.parse(LZString.decompress(localStorage.getItem('downloadLinks')));
+                } catch (e) {
+                    downloadLinks = [];
+                }
+
+                if (downloadLinks !== undefined && downloadLinks !== null && downloadLinks !== "null") {
+                    Array.prototype.push.apply(cmrLinks, downloadLinks);
+                }
+
+
+                localStorage.setItem('downloadLinks', LZString.compress(JSON.stringify(cmrLinks)));
+            }
+
+            startDownload();
+
+            /*
+            //This method can be used when download API https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/downloads/download are not supported
+            if (downloaderPopupId === null) {
+              createPopupDownloader();
+            } else {
+              chrome.windows.get(
+                downloaderPopupId,
+                { populate: true },
+                function (windowInfo) {
+                  chrome.runtime.sendMessage({ message: "begin-download" });
+                });
+            }
+          */
+
+        }
+        else if (request.message == "cancel-download") {
+
+            let downloadKeys = Object.keys(downloadIds);
+            for (let i of downloadKeys) {
+                chrome.downloads.cancel(parseInt(i));
+            }
+
+            localStorage.setItem('downloadLinks', LZString.compress(JSON.stringify([])));
+            clearInterval(interval);
+        }
+    }
+
+    /*
+      var downloadUrl = "https://daac.ornl.gov/daacdata/global_climate/global_N_deposition_maps/data/NHx-deposition2050.txt";
+      var downloading = browser.downloads.download({
+        url : downloadUrl,
+        method: 'GET',
+        conflictAction : 'uniquify'
+      });
+      downloading.then(onStartedDownload, onFailed);
+
+       chrome.downloads.download({url:"https://daac.ornl.gov/daacdata/global_climate/global_N_deposition_maps/data/NHx-deposition2050.txt"});
+
+    */
+
+
+});
+
+chrome.downloads.onChanged.addListener(function (delta) {
+    if (delta.state && delta.state.current === "complete") {
+        console.log(`Download ${delta.id} has completed.`);
+        URL.revokeObjectURL(downloadIds[delta.id]);
+    }
+});
 
 
 
