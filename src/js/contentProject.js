@@ -16,12 +16,20 @@ $(document).ready(function () {
 
         let filter = [];
         let allConceptIds = getUrlVars()["p"];
+        console.log(allConceptIds);
         let conceptId = [];
-        conceptId = jQuery.unique(allConceptIds.split("!"));
-        let noOfDatasets = conceptId.length;
+
+        conceptId = allConceptIds.split("!");
+        //conceptId = conceptId.filter((item, i, arr) => arr.indexOf(item) === i);
+        console.log(conceptId);
+
+        let noOfDatasets = conceptId.length - 1;
         let temporal = [];
-        for (let i = 1; i <= noOfDatasets; i++)
+        for (let i = 1; i <= noOfDatasets; i++) {
             temporal[i - 1] = getUrlVars()["pg[" + i + "][qt]"];
+            //console.log(temporal[i-1], i);
+        }
+
         let polygon = getUrlVars()["polygon"];
         let rectangle = getUrlVars()["sb"];
         let point = getUrlVars()["sp"];
@@ -31,7 +39,7 @@ $(document).ready(function () {
             filter[i]['polygon'] = "&polygon=";
             filter[i]['rectangle'] = "&bounding_box=";
             filter[i]['point'] = "&point=";
-            filter[i]['concept_id'] = "?collection_concept_id=" + conceptId[i];
+            filter[i]['concept_id'] = "?collection_concept_id=" + conceptId[i+1];
             if (temporal[i])
                 filter[i]['temporal'] = "&temporal[]=" + temporal[i];
             if (polygon)
@@ -41,7 +49,7 @@ $(document).ready(function () {
             if (point)
                 filter[i]['point'] = "&point=" + point;
         }
-
+        console.log(filter);
         return filter;
     }
 
@@ -49,12 +57,15 @@ $(document).ready(function () {
         // Function to get CMR link with appropriate filter
         let filter = [];
         filter = getCmrFilters(url);
+        console.log(filter);
         let noOfDatasets = filter.length;
+        console.log(noOfDatasets);
         let baseUrl = "https://cmr.earthdata.nasa.gov/search/granules.json";
         let urls = [];
         for (let i = 0; i < noOfDatasets; i++) {
             urls[i] = baseUrl + filter[i]['concept_id'] + filter[i]['polygon'] + filter[i]['rectangle'] + filter[i]['point'] + filter[i]['temporal'] + "&page_size=700&page_num=";
         }
+        console.log(urls);
         return urls;
     }
 
@@ -68,6 +79,7 @@ $(document).ready(function () {
         let url = window.location.href;
         let cmrUrls = [];
         cmrUrls = getCmrQueryLink(url);
+        console.log(cmrUrls);
         let noOfDatasets = cmrUrls.length;
 
         window.numberOfEntries = 0;
@@ -91,17 +103,18 @@ $(document).ready(function () {
                             swal.fire("Empty Dataset", "Earthdata CMR returned no granules for this search query. Please contact Earthdata Help Desk", "error");
                         }
 
-                        for (let i = 0; i < numberOfEntries; i++) {
-                            downloadLink[i] = out.feed.entry[i].links[0].href; //filters all the download links
+                        for (let k = 0; k < numberOfEntries; k++) {
+                            downloadLink[k] = out.feed.entry[k].links[0].href; //filters all the download links
+
                         }
 
                         //downloadPopUp.close();
-
                         chrome.runtime.sendMessage({
                             links: downloadLink,
                             number: numberOfEntries,
                             message: "start-download",
                         }); //send the download links as message to background page
+
 
                     })
                     .catch(err => {
@@ -139,11 +152,6 @@ $(document).ready(function () {
             //Function for a click listener on the New Bulk Download button
 
             $("#newBulkDownloadButton").click(function openWin() {
-
-
-                //Pops up the urs login window if the user is already not logged in
-
-
                 fetch("https://urs.earthdata.nasa.gov/profile")
                     .then((out) => {
 
@@ -169,6 +177,9 @@ $(document).ready(function () {
                         console.error("Error in fetching Logged in status");
                         throw err
                     });
+
+
+
             });
         }
     }
