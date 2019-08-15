@@ -28,7 +28,7 @@ $(document).ready(function () {
         if (conceptId.indexOf("!") > 0) {
             conceptId = conceptId.substring(conceptId.lastIndexOf('!') + 1);
         }
-        let temporal = getUrlVars()["pg[0][qt]"]; //this needs to be more dynamic in identifying correct index of the filter
+        let temporal = getUrlVars()["pg[0][qt]"] || getUrlVars()["pg[1][qt]"] || getUrlVars()["pg[2][qt]"]; //This is because of the inconsistency in the URL
         let polygon = getUrlVars()["polygon"];
         let rectangle = getUrlVars()["sb"];
         let point = getUrlVars()["sp"];
