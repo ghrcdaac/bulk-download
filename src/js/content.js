@@ -28,18 +28,23 @@ $(document).ready(function () {
         if (conceptId.indexOf("!") > 0) {
             conceptId = conceptId.substring(conceptId.lastIndexOf('!') + 1);
         }
-        let temporal = getUrlVars()["pg[0][qt]"] || getUrlVars()["pg[1][qt]"] || getUrlVars()["pg[2][qt]"]; //This is because of the inconsistency in the URL
+        let temporalGranule = getUrlVars()["pg[0][qt]"] || getUrlVars()["pg[1][qt]"] || getUrlVars()["pg[2][qt]"]; //This is because of the inconsistency in the URL
         let polygon = getUrlVars()["polygon"];
         let rectangle = getUrlVars()["sb"];
         let point = getUrlVars()["sp"];
+        let temporalGlobal = getUrlVars()["qt"];
         filter['concept_id'] = "?collection_concept_id=" + conceptId;
         filter['temporal'] = "&temporal[]=";
         filter['polygon'] = "&polygon=";
         filter['rectangle'] = "&bounding_box=";
         filter['point'] = "&point=";
 
-        if (temporal)
-            filter['temporal'] = filter['temporal'] + temporal;
+        if (temporalGranule)
+            filter['temporal'] = filter['temporal'] + temporalGranule;
+        else if(temporalGlobal)
+            filter['temporal'] = filter['temporal'] + temporalGlobal;
+
+
         if (polygon)
             filter['polygon'] = "&polygon=" + polygon;
         if (rectangle)
@@ -54,12 +59,7 @@ $(document).ready(function () {
         let baseUrl = "https://cmr.earthdata.nasa.gov/search/granules.json";
         return (baseUrl + filter['concept_id'] + filter['polygon'] + filter['rectangle'] + filter['point'] + filter['temporal'] + "&downloadable=true&page_size=700&page_num=");
     }
-
-    function downloadPopUp() {
-        let timerInterval;
-
-    }
-
+ 
     function downloadFiles() {
 
         /*

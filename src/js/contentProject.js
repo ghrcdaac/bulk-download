@@ -29,19 +29,26 @@ $(document).ready(function () {
             temporal[i - 1] = getUrlVars()["pg[" + i + "][qt]"];
             //console.log(temporal[i-1], i);
         }
-
+        let temporalGlobal = getUrlVars()["qt"];
         let polygon = getUrlVars()["polygon"];
         let rectangle = getUrlVars()["sb"];
         let point = getUrlVars()["sp"];
         for (let i = 0; i < noOfDatasets; i++) {
+
             filter[i] = {};
             filter[i]['temporal'] = "&temporal[]=";
             filter[i]['polygon'] = "&polygon=";
             filter[i]['rectangle'] = "&bounding_box=";
             filter[i]['point'] = "&point=";
             filter[i]['concept_id'] = "?collection_concept_id=" + conceptId[i+1];
-            if (temporal[i])
+            if (temporal[i]) //granule filter
+            {
                 filter[i]['temporal'] = "&temporal[]=" + temporal[i];
+            }                
+            else if(temporalGlobal){
+                filter[i]['temporal'] =  "&temporal[]=" + temporalGlobal;
+            }
+            
             if (polygon)
                 filter[i]['polygon'] = "&polygon=" + polygon;
             if (rectangle)
@@ -70,6 +77,7 @@ $(document).ready(function () {
     }
 
     function download() {
+
         let downloadPopUp = swal.fire({
             title: 'Fetching download links from Earthdata CMR',
             showConfirmButton: false,
@@ -108,7 +116,7 @@ $(document).ready(function () {
 
                         }
 
-                        //downloadPopUp.close();
+                       // downloadPopUp.close();
                         chrome.runtime.sendMessage({
                             links: downloadLink,
                             number: numberOfEntries,
