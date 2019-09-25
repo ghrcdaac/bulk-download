@@ -1,6 +1,7 @@
 # Project Title :
 EarthData Bulk Downloader Browser Extension
 
+
 #### Description:
 A browser extension to add bulk data download capability to Earthdata Search website.
 
