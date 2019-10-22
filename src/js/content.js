@@ -97,7 +97,7 @@ $(document).ready(function () {
 
             let url = window.location.href;
             let cmrUrl = getCmrQueryLink(url);
-            let numberOfGranules = jQuery(".pill").first().text();
+            let numberOfGranules = $(".button__badge, .badge, .badge-secondary").first().text();
             let numberOfGranulesString = [];
             numberOfGranulesString = numberOfGranules.split(" ");
 
@@ -170,15 +170,15 @@ $(document).ready(function () {
 
 
     function addGranuleMutation() {
-        let granulesMutation = jQuery(".pill")[0];
+        let granulesMutation = $(".button__badge, .badge, .badge-secondary")[0];
 
         //To check the change in number of granules
         let mutationObserver = new MutationObserver(function (mutations, mutationObserver) {
             mutations.forEach(function (mutation) {
                 if (document.getElementById("newBulkDownloadButton")) {
-                    let noOfGranules = jQuery(".pill").first().text();
+                    let noOfGranules = $(".button__badge, .badge, .badge-secondary").first().text();
                     $("#newBulkDownloadButton").html('<i class="fa fa-download"></i> Bulk Download All ' +
-                        '<span class="pill" >' + noOfGranules + '</span>');
+                        '<span class="button__badge badge badge-secondary" >' + noOfGranules + '</span>');
                 }
             });
         });
@@ -197,13 +197,17 @@ $(document).ready(function () {
             let text = document.createTextNode("Bulk Download All");
             button.appendChild(text);
             button.id = "newBulkDownloadButton";
-            button.className = "button retrieve master-overlay-info-tooltip-big";
-            jQuery(".master-overlay-global-actions, .actions").append(button);
-            document.getElementById("newBulkDownloadButton").style.background = '#2b7fb9';
-            //getting the granular data from the existing Download Now button
-            let noOfGranules = jQuery(".pill").first().text();
-            $("#newBulkDownloadButton").html('<i class="fa fa-download"></i> Bulk Download All' + '<span class="pill">' + noOfGranules + '</span>');
+            button.className = "granule-results-actions__download-all";
+            $(".granule-results-actions").append(button);
+            button.style.background = '#2b7fb9';
+            button.style.padding = "5px 20px";
+            button.style.color = "white";
 
+            //getting the granular data from the existing Download Now button
+            let noOfGranules = $(".button__badge, .badge, .badge-secondary").first().text();
+            let newButton = $("#newBulkDownloadButton");
+            newButton.html('<i class="fa fa-download"></i> <span class="button__contents"> Bulk Download All </span> <span class="button__badge badge badge-secondary">' + noOfGranules + '</span>');
+            newButton.css("width", "100%");
             let loginWindow = null;
 
             //Function for a click listener on the New Bulk Download button
@@ -241,7 +245,7 @@ $(document).ready(function () {
     }
 
     function addMutation() {
-        let buttonCount = jQuery("#granule-list").find(".master-overlay-global-actions.actions").find("button").length;
+        let buttonCount = $(".granule-results-actions__download-all").find("button").length;
 
         if (buttonCount === 1 && buttonCount !== 2) {
             appendBulkDownloadButton();

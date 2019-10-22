@@ -2,7 +2,7 @@
   "name": "Earth Data Bulk Downloader",
   "version": "1.0",
   "manifest_version": 2,
-  "description": "Extension Version 3.0",
+  "description": "Extension Version 4.0",
   "permissions": [
     "tabs",
     "activeTab",

@@ -139,7 +139,7 @@ $(document).ready(function () {
 
     function appendBulkDownloadButton() {
         let location = window.location.href;
-        let baseUrl = "https://search.earthdata.nasa.gov/projects/";
+        let baseUrl = "https://search.earthdata.nasa.gov/projects";
 
         //appends the Bulk Download button only if the baseURL matches and does not exist already
         if (location.includes(baseUrl) && !document.getElementById("newBulkDownloadButton")) {
@@ -149,12 +149,15 @@ $(document).ready(function () {
             button.appendChild(text);
             button.id = "newBulkDownloadButton";
             button.className = "button button-full button-download-data";
-            $(".master-overlay-footer-actions").append(button);
+            $(".project-collections__footer").append(button);
+            button.style.background = '#2b7fb9';
+            button.style.padding = "5px 20px";
+            button.style.color = "white";
 
-            document.getElementById("newBulkDownloadButton").style = "background:#2b7fb9; margin-top: 5px;";
-
+            let newButton = $("#newBulkDownloadButton");
             //getting the granular data from the existing Download Now button
-            $("#newBulkDownloadButton").html('<i class="fa fa-download"></i> Bulk Download All');
+            newButton.html('<i class="fa fa-download"></i> Bulk Download All');
+            newButton.css("width", "100%");
 
 
             //Function for a click listener on the New Bulk Download button
@@ -194,7 +197,7 @@ $(document).ready(function () {
 
     function addMutation() {
 
-        if ($(".master-overlay-footer-actions").find(".button-full").length === 1) {
+        if ($(".project-collections__footer").find(".button").length === 1) {
             clearInterval(interval);
             appendBulkDownloadButton();
 
