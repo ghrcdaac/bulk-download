@@ -1,4 +1,27 @@
 let parser = new UAParser();
+let visiting = {};
+let visited = {};
+let localStorageInUse = false;
+
+function pushSingleLink(link){
+
+    localStorageInUse = true;
+    let downloadLinks = JSON.parse(LZString.decompress(localStorage.getItem('downloadLinks')));
+    downloadLinks.push(link);
+    localStorage.setItem('downloadLinks', LZString.compress(JSON.stringify(downloadLinks)));
+    localStorageInUse = false;
+}
+
+function getSingleLink(){
+
+    localStorageInUse = true;
+    let downloadLinks = JSON.parse(LZString.decompress(localStorage.getItem('downloadLinks')));
+    downloadLink = downloadLinks.shift();
+    localStorage.setItem('downloadLinks', LZString.compress(JSON.stringify(downloadLinks)));
+    localStorageInUse = false;
+
+    return downloadLink;
+}
 
 if (parser.getBrowser().name === "Firefox") {
     chrome = browser;
@@ -14,7 +37,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     })
 });
 
-window.downloadIds = [];
+downloadIds = [];
 let downloadLinks = [];
 let senderWindow = null;
 
@@ -24,13 +47,10 @@ function createPopupDownloader() {
     let downloaderPopup = chrome.windows.create({
             url: chrome.runtime.getURL("html/downloader.html"),
             type: "popup",
-            // height: 10,
-            //  width: 10,
             state: "minimized"
         },
         function (windowInfo) {
             downloaderPopupId = windowInfo.id;
-            // chrome.runtime.sendMessage({ message: "begin-download" });
         }
     );
 
@@ -41,78 +61,79 @@ function createPopupDownloader() {
     });
 }
 
-function getUrl(data, strFileName, strMimeType) {
-
-    var self = window, // this script is only for browsers anyway...
-        defaultMime = "application/octet-stream", // this default mime also triggers iframe downloads
-        mimeType = strMimeType || defaultMime,
-        payload = data,
-        toString = function (a) {
-            return String(a);
-        },
-        myBlob = (self.Blob || self.MozBlob || self.WebKitBlob || toString),
-        blob,
-        myBlob = myBlob.call ? myBlob.bind(self) : Blob;
-
-
-    blob = payload instanceof myBlob ?
-        payload :
-        new myBlob([payload], {type: mimeType});
-
-    if (self.URL) { // simple fast and modern way using Blob and URL:
-        return self.URL.createObjectURL(blob);
-    }
-
-    return false;
-}
-
 let interval = null;
 let blobURL = null;
+let cancelledJobs = {};
+let totalJobs = 0;
+let jobId = 0;
+
 let startDownload = function () {
+
+    totalJobs += 1;
+    jobId = totalJobs;
+
+    cancelledJobs[jobId] = false;
+
 
     interval = setInterval(function () {
 
-        let downloadLinks = JSON.parse(LZString.decompress(localStorage.getItem('downloadLinks')));
+        if (!localStorageInUse){
+            let downloadLinks = JSON.parse(LZString.decompress(localStorage.getItem('downloadLinks')));
+        
+            if (downloadLinks !== undefined && downloadLinks !== null && downloadLinks !== "null" && downloadLinks.length !== 0) {
+                downloadLink = downloadLinks.shift();
+                localStorage.setItem('downloadLinks', LZString.compress(JSON.stringify(downloadLinks)));
 
-        if (downloadLinks !== undefined && downloadLinks !== null && downloadLinks !== "null" && downloadLinks.length !== 0) {
+                if (downloadLink !== undefined) {
+                                    
+                    download(downloadLink);
+                }
 
-            downloadLink = downloadLinks.shift();
-            localStorage.setItem('downloadLinks', LZString.compress(JSON.stringify(downloadLinks)));
-
-            if (downloadLink !== undefined) {
-
-                let x = new XMLHttpRequest();
-                x.open("POST", downloadLink, true);
-                x.responseType = 'blob';
-
-                let filename = downloadLink.substring(downloadLink.lastIndexOf('/') + 1);
-
-                x.onload = function (e) {
-
-                    blobURL = getUrl(x.response, filename);
-                    
-                    console.log(`Downloading ${blobURL}`);
-
-                    chrome.downloads.download({
-                        url: blobURL,
-                        filename: filename,
-                    }, function (downloadId) {                    
-                        downloadIds[downloadId] = blobURL;
-                    });
-
-
-                };
-                x.send();
+            } else {
+                visited = {};
+                visiting = {};
+                clearInterval(interval);
             }
-
-        } else {
-            clearInterval(interval);
         }
 
     }, 1000);
 
 };
 
+const onLoggedIn = (getSingleLink, callback) => {
+
+    const loginLink = getSingleLink();
+    const baseLink = loginLink.match(/^(http)s?:\/\/.[^\/]*\//g)[0];
+
+    if(!visited[baseLink] && visiting[baseLink]){
+        return;
+    }
+    else if(!visited[baseLink]){
+
+        visiting[baseLink] = true;
+        
+        chrome.windows.create({
+            url: [loginLink]
+        }, (loginWindow)=>{
+            chrome.downloads.onCreated.addListener(function loginDownload(item){
+                chrome.downloads.cancel(item.id,
+                    function(item){
+                        console.log("deleting", item);
+                    });
+                pushSingleLink(loginLink);
+                chrome.windows.remove(loginWindow.id);
+                chrome.downloads.onCreated.removeListener(loginDownload);
+                callback();
+            });
+        })
+        
+    }else{
+        pushSingleLink(loginLink);
+        callback();
+    }
+
+    
+};
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     senderWindow = sender;
@@ -121,7 +142,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.message == "start-download") {
 
             init = true;
-
+            
             if (request.links !== undefined) {
 
                 cmrLinks = request.links;
@@ -140,28 +161,24 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 
                 localStorage.setItem('downloadLinks', LZString.compress(JSON.stringify(cmrLinks)));
+                
+                onLoggedIn(getSingleLink, startDownload);
+                
             }
-
-            startDownload();
-
-            /*
-            //This method can be used when download API https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/downloads/download are not supported
-            if (downloaderPopupId === null) {
-              createPopupDownloader();
-            } else {
-              chrome.windows.get(
-                downloaderPopupId,
-                { populate: true },
-                function (windowInfo) {
-                  chrome.runtime.sendMessage({ message: "begin-download" });
-                });
-            }
-          */
-
         }
         else if (request.message == "cancel-download") {
 
+            visited = {};
+            visiting = {};
+            
+            localStorage.setItem('downloadLinks', LZString.compress(JSON.stringify([])));
+
+            Object.keys(cancelledJobs).forEach(jobId => {
+                cancelledJobs[jobId] = true;
+            });
+            
             let downloadKeys = Object.keys(downloadIds);
+            
             for (let i of downloadKeys) {
                 chrome.downloads.cancel(parseInt(i));
             }
@@ -171,21 +188,23 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         }
     }
 
-    /*
-      var downloadUrl = "https://daac.ornl.gov/daacdata/global_climate/global_N_deposition_maps/data/NHx-deposition2050.txt";
-      var downloading = browser.downloads.download({
-        url : downloadUrl,
-        method: 'GET',
-        conflictAction : 'uniquify'
-      });
-      downloading.then(onStartedDownload, onFailed);
-
-       chrome.downloads.download({url:"https://daac.ornl.gov/daacdata/global_climate/global_N_deposition_maps/data/NHx-deposition2050.txt"});
-
-    */
-
-
 });
+
+function download(downloadLink){
+                
+    let filename = downloadLink.substring(downloadLink.lastIndexOf('/') + 1);
+
+    chrome.downloads.download({
+        url: downloadLink,
+        filename: filename
+    }, function (downloadId) {
+        if (cancelledJobs[jobId]) {
+            chrome.downloads.cancel(downloadId);
+        } else {
+            downloadIds[downloadId] = downloadLink;
+        }
+    });
+}
 
 chrome.downloads.onChanged.addListener(function (delta) {
     if (delta.state && delta.state.current === "complete") {
@@ -193,15 +212,3 @@ chrome.downloads.onChanged.addListener(function (delta) {
         URL.revokeObjectURL(downloadIds[delta.id]);
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-

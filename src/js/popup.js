@@ -3,18 +3,6 @@ let bgPage = chrome.extension.getBackgroundPage(); //Getting the variables from 
 let idsOfDownload = [];
 idsOfDownload = bgPage.downloadIds;
 console.log(idsOfDownload);
-/*let pause = document.createElement("button");
-pause.id = "pause";
-pause.className = "btn";
-pause.innerHTML ='<i class="fa fa-pause-circle"></i> Pause All</button>';
-document.body.appendChild(pause);
- 
-let resume = document.createElement("button");
-resume.id = "resume";
-resume.className = "btn";
-resume.innerHTML='<i class="fa fa-play-circle"></i> Resume All</button> <br>';
-resume.display = "none";
-document.body.appendChild(resume); */
  
 let cancel = document.createElement("button");
 cancel.id = "cancel";

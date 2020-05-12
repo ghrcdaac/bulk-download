@@ -3,7 +3,6 @@ let bgPage = chrome.extension.getBackgroundPage();
 
 let senderWindow = null;
 
-
 let interval = null;
 let startDownload = function () {
 

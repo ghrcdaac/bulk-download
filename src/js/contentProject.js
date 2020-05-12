@@ -16,18 +16,15 @@ $(document).ready(function () {
 
         let filter = [];
         let allConceptIds = getUrlVars()["p"];
-        console.log(allConceptIds);
         let conceptId = [];
 
         conceptId = allConceptIds.split("!");
-        //conceptId = conceptId.filter((item, i, arr) => arr.indexOf(item) === i);
-        console.log(conceptId);
+
 
         let noOfDatasets = conceptId.length - 1;
         let temporal = [];
         for (let i = 1; i <= noOfDatasets; i++) {
             temporal[i - 1] = getUrlVars()["pg[" + i + "][qt]"];
-            //console.log(temporal[i-1], i);
         }
         let temporalGlobal = getUrlVars()["qt"];
         let polygon = getUrlVars()["polygon"];
@@ -44,11 +41,11 @@ $(document).ready(function () {
             if (temporal[i]) //granule filter
             {
                 filter[i]['temporal'] = "&temporal[]=" + temporal[i];
-            }                
+            }
             else if(temporalGlobal){
                 filter[i]['temporal'] =  "&temporal[]=" + temporalGlobal;
             }
-            
+
             if (polygon)
                 filter[i]['polygon'] = "&polygon=" + polygon;
             if (rectangle)
@@ -56,7 +53,6 @@ $(document).ready(function () {
             if (point)
                 filter[i]['point'] = "&point=" + point;
         }
-        console.log(filter);
         return filter;
     }
 
@@ -64,22 +60,19 @@ $(document).ready(function () {
         // Function to get CMR link with appropriate filter
         let filter = [];
         filter = getCmrFilters(url);
-        console.log(filter);
-        let noOfDatasets = filter.length;
-        console.log(noOfDatasets);
+        let noOfDatasets = filter.length;;
         let baseUrl = "https://cmr.earthdata.nasa.gov/search/granules.json";
         let urls = [];
         for (let i = 0; i < noOfDatasets; i++) {
             urls[i] = baseUrl + filter[i]['concept_id'] + filter[i]['polygon'] + filter[i]['rectangle'] + filter[i]['point'] + filter[i]['temporal'] + "&page_size=700&page_num=";
         }
-        console.log(urls);
         return urls;
     }
 
     function download() {
 
         let downloadPopUp = swal.fire({
-            title: 'Fetching download links from Earthdata CMR',
+            title: 'Loading files for Download',
             showConfirmButton: false,
             timer: 3000
         });
@@ -87,7 +80,6 @@ $(document).ready(function () {
         let url = window.location.href;
         let cmrUrls = [];
         cmrUrls = getCmrQueryLink(url);
-        console.log(cmrUrls);
         let noOfDatasets = cmrUrls.length;
 
         window.numberOfEntries = 0;
@@ -96,8 +88,6 @@ $(document).ready(function () {
             let page = 1;
             do {
                 cmrUrlPaging[i] = cmrUrls[i] + page;
-                console.log(cmrUrlPaging[i]);
-
                 let downloadLink = [];
 
                 fetch(cmrUrlPaging[i])
@@ -143,12 +133,13 @@ $(document).ready(function () {
 
         //appends the Bulk Download button only if the baseURL matches and does not exist already
         if (location.includes(baseUrl) && !document.getElementById("newBulkDownloadButton")) {
+           
             //creates a new button element and the same class name is given as the existing Download Now Button
             let button = document.createElement("button");
             let text = document.createTextNode("Bulk Download All");
             button.appendChild(text);
             button.id = "newBulkDownloadButton";
-            button.className = "button button-full button-download-data";
+            button.className = "button button--full button--icon btn btn-success";
             $(".project-collections__footer").append(button);
             button.style.background = '#2b7fb9';
             button.style.padding = "5px 20px";
@@ -161,51 +152,21 @@ $(document).ready(function () {
 
 
             //Function for a click listener on the New Bulk Download button
-
             $("#newBulkDownloadButton").click(function openWin() {
-                fetch("https://urs.earthdata.nasa.gov/profile")
-                    .then((out) => {
-
-                        //Pops up the urs login window if the user is already not logged in
-                        if (out.url === "https://urs.earthdata.nasa.gov/home" && out.redirected === true) {
-                            loginWindow = window.open('https://urs.earthdata.nasa.gov/', loginWindow, 'width=600,height=600');
-
-                            let loginInterval = window.setInterval(function () {
-
-                                if (document.cookie.match(/^.*urs_user_already_logged=yes.*$/)) {
-                                    loginWindow.close();
-                                    clearInterval(loginInterval);
-                                    download();
-                                }
-                            }, 1000);
-                        }
-                        else {
-                            download();
-                        }
-
-                    })
-                    .catch(err => {
-                        console.error("Error in fetching Logged in status");
-                        throw err
-                    });
-
-
+                download();
 
             });
         }
     }
 
+    let interval;
     function addMutation() {
 
         if ($(".project-collections__footer").find(".button").length === 1) {
-            clearInterval(interval);
             appendBulkDownloadButton();
-
         }
     }
 
-    let interval = setInterval(addMutation, 1000);
-
-
+    interval = setInterval(addMutation, 3000);
 
 });
