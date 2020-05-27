@@ -24,15 +24,15 @@ setInterval(function(){
         let status = `Total pending download: ${downloadLinks.length}`;
         jQuery("#download-status").html(status);
     }
-    if(downloadLinks.length===0){
-        //$(pause).hide();
-        //$(resume).hide();
-        $(cancel).hide();
-    }else{
-       // $(pause).show();
-        //$(resume).show();
-        $(cancel).show();
-    }
+    // if(downloadLinks.length===0){
+    //     //$(pause).hide();
+    //     //$(resume).hide();
+    //     $(cancel).hide();
+    // }else{
+    //    // $(pause).show();
+    //     //$(resume).show();
+    //     $(cancel).show();
+    // }
 },1000);
 
 
@@ -48,8 +48,3 @@ $(resume).click(function () {
 $(cancel).click(function () {
     chrome.runtime.sendMessage({message: "cancel-download"});
 });
-
-
-
-
-

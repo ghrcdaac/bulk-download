@@ -1,4 +1,5 @@
 console.log("Earth Data Bulk Downloader Extension has been set up!");
+let totalMBytes = 0;
 
 $(document).ready(function () {
 
@@ -103,11 +104,14 @@ $(document).ready(function () {
 
                         for (let k = 0; k < numberOfEntries; k++) {
                             downloadLink[k] = out.feed.entry[k].links[0].href; //filters all the download links
-
+                            if(out.feed.entry[k].granule_size){
+                                totalMBytes += parseInt(out.feed.entry[k].granule_size);
+                            }
                         }
 
                        // downloadPopUp.close();
                         chrome.runtime.sendMessage({
+                            totalMBytes: totalMBytes,
                             links: downloadLink,
                             number: numberOfEntries,
                             message: "start-download",
