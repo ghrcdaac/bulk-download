@@ -1,4 +1,3 @@
-console.log("Earth Data Bulk Downloader Extension has been set up!");
 let totalMBytes = 0;
 
 $(document).ready(function () {

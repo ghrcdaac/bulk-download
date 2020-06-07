@@ -1,0 +1,75 @@
+*{
+  box-sizing: border-box;
+}
+body{
+    margin: 0;
+    /* background-image: url("D:/Projects/web application/Hagati/my portfolio/portfolio/images/Anupam.jpg"); */
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 200px;
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    /* align-items: center; */
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+.btn {
+    background-color: DodgerBlue;
+    border: none;
+    color: white;
+    padding: 8px 9px;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    margin-left: 10px;
+    width: 100px;
+    height: 30px;
+
+}
+
+/* Darker background on mouse-over */
+.button:hover {
+    background-color: RoyalBlue;
+}
+
+.Progress_Status{
+    display: flex;
+    width: 100%;
+    background-color: #ddd;
+}
+
+#cancel{
+    display: flex;
+    width: 90px;
+}
+
+#progress_bar {
+    display: flex;
+    width: 0%;
+    height: 100%;
+    background-color: #4CAF50;
+    text-align: center;
+    line-height: 32px;
+    color: black;
+}
+
+.heading{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sub_heading{
+    display: flex;
+    align-self: flex-end;
+    text-align: right;
+    font-size: xx-small;
+}

@@ -1,5 +1,3 @@
-console.log("Earth Data Bulk Downloader Extension has been set up!");
-
 let parser = new UAParser();
 let hasDownloadableLinks = true;
 let lastURL = window.location.href;
@@ -21,7 +19,6 @@ $(document).ready(function () {
                 .then(res => res.json())
                 .then((out) => {
                     const entries = out['feed']['entry'];
-                    console.log(entries.length);
                     if (entries.length == 0){
                         hasDownloadableLinks = false;
                         return false;
@@ -92,8 +89,6 @@ $(document).ready(function () {
         if(!withFilters){
             link = link + [1];
         }
-
-        console.log(link);
         return link;
     }
 
@@ -102,8 +97,10 @@ $(document).ready(function () {
         let downloadPopUp = swal.fire({
             title: 'Loading files for Download',
             showConfirmButton: false,
-            timer: 3000
+            timer: 20000
         });
+
+        chrome.runtime.sendMessage({ message: "swal-fire"});
 
         let url = window.location.href;
         let cmrUrl = getCmrQueryLink(url, true);
@@ -128,10 +125,7 @@ $(document).ready(function () {
         let downloadInterval = setInterval(() => {
             if (granulesFetched < noOfGranules) {
 
-                console.log(cmrUrlPaging);
                 cmrUrlPaging = cmrUrl + [page];
-                console.log(cmrUrlPaging);
-
 
                 fetch(cmrUrlPaging)
                     .then(res => res.json())
@@ -164,6 +158,7 @@ $(document).ready(function () {
 
                     })
                     .catch(err => {
+                        swal.close();
                         swal.fire({
                             title: 'Could not fetch the download links',
                             type: 'error'
@@ -241,13 +236,17 @@ $(document).ready(function () {
 
                     })
                     .catch(err => {
+                        swal.close();
+                        swal.fire({
+                            title: 'Could not fetch login page\nPlease login to URS website and try again',
+                            type: 'error'
+                        });
                         console.error("Error in fetching Logged in status");
                         throw err
                     });
             })
         }
     }
-    
     
     let interval;
     function addMutation() {
@@ -333,4 +332,14 @@ $(document).ready(function () {
         }
     }
     checkCurrentUrl();
+
+    chrome.runtime.onMessage.addListener(
+        function (request, sender, sendResponse){
+            if(request.message && request.message == "clear-swal-fire"){
+                swal.close();
+                sendResponse({
+                    message: "swal-closed"
+                });
+            }
+        });
 });

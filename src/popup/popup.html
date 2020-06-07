@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="popup.css"/>
+
+        <title>Popup</title>
+
+    </head>
+
+    <body>
+        <div class="heading">
+            <h2>EarthData Bulk Downloader</h2>
+            <div class="sub_heading">
+                <span> Version 4.0</span>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            
+            <button class="btn" id="cancel">
+                <i class="fa fa-stop-circle"></i> &nbsp Cancel
+            </button>
+
+            <button class="btn" id="pause">
+                <i class="fa fa-pause-circle"> </i> &nbsp Pause
+            </button>
+
+            <button class="btn" id="resume">
+                <i class="fa fa-play-circle"> </i> &nbsp Resume
+            </button>
+        </div>
+
+
+        <h3>Download Progress</h3>
+
+        <div class="Progress_Status">
+            <div id="progress_bar">
+                0%
+            </div>
+        </div>
+
+        <script type="text/javascript" src="../lib/jquery-3.4.1.js"></script>
+        <script type="text/javascript" src="popup.js"></script>
+        <script type="text/javascript" src="../lib/fontawesome.js"></script>
+        <script type="text/javascript" src="../lib/lz-string.js"></script>
+
+    </body>
+</html>
