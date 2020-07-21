@@ -63,7 +63,6 @@ class PopupManager{
             this.data.progress = parseInt (100 * (this.data.completed)/
                 (this.data.totalNoofFiles - this.data.interrupted));
         }
-        // console.log(this.data);
     }
 
     reset(){
@@ -82,11 +81,8 @@ class PopupManager{
         chrome.runtime.sendMessage({
             message: "update-popup-progress",
             data: this.data
-            // progress: this.data.progress
         })
     }
 
-    // updateProgress(){
-    //     chrome.downloads.onChanged.addListener(this.countDownloads.bind(this))
-    // }
+    
 }

@@ -125,7 +125,6 @@ $(document).ready(function () {
 
                         let loginLinks = [];
 
-                        // let randomIndices = generateRandomNumbers(numberOfEntries);
 
                         for (let i = 0; i < numberOfEntries; i++) {
                             cmrLinks[i] = out.feed.entry[i].links[0].href; //filters all the download link
@@ -146,8 +145,6 @@ $(document).ready(function () {
                                 firstItr = true; 
                             }
 
-                            // chrome.storage.local.get(null, (item) => console.log(item));
-
                             chrome.runtime.sendMessage({
                                 granuleCount: noOfGranules,
                                 dataSetName: dataSetName,
@@ -156,7 +153,6 @@ $(document).ready(function () {
                                 message: "start-download"
                             })
                         })
-                        // .catch(err => console.error(err));
 
                     })
                     .catch(err => {
@@ -172,7 +168,6 @@ $(document).ready(function () {
                 page++;
             }
             else {
-                // window.onbeforeunload = null;
                 chrome.runtime.sendMessage({
                     message: "update-granuleCount",
                     granuleCount: granuleCount
@@ -251,15 +246,15 @@ $(document).ready(function () {
                         }
 
                     })
-                    // .catch(err => {
-                    //     swal.close();
-                    //     swal.fire({
-                    //         title: 'Could not fetch login page\nPlease login to URS website and try again',
-                    //         type: 'error'
-                    //     });
-                    //     console.error("Error in fetching Logged in status");
-                    //     throw err
-                    // });
+                    .catch(err => {
+                        swal.close();
+                        swal.fire({
+                            title: 'Could not fetch login page\nPlease login to URS website and try again',
+                            type: 'error'
+                        });
+                        console.error("Error in fetching Logged in status");
+                        throw err
+                    });
             })
         }
     }

@@ -42,37 +42,7 @@ function updatePopup(){
 
 $(cancel).click(function () {
     
-    chrome.runtime.sendMessage({message: "cancel-download"});
-    // chrome.runtime.sendMessage({message: "pause-download"});
-    // (() => {
-    //     Swal.fire({
-    //         title: 'Are you sure?',
-    //         text: "You won't be able to revert this!",
-    //         type: 'warning',
-    //         showCancelButton: true,
-    //         confirmButtonColor: '#3085d6',
-    //         cancelButtonColor: '#d33',
-    //         confirmButtonText: 'Resume'
-    //       }).then((result) => {
-    //         if (result.value) {
-    //             chrome.runtime.sendMessage({message: "resume-download"});
-    //             Swal.fire(
-    //                 'Resume',
-    //                 'Your downloads has been resumed.',
-    //                 'success'
-    //             )
-    //         }else{
-    //             data.progress = 0;
-    //             updateProgressBar(data.progress);
-    //             chrome.runtime.sendMessage({message: "cancel-download"});
-    //             Swal.fire(
-    //                 'Cancelled',
-    //                 'Your downloads has been canceled.',
-    //                 'success'
-    //             )
-    //         }
-    //       })
-    // })(); 
+    chrome.runtime.sendMessage({message: "cancel-download"});     
 
 });
 $(pause).click(function () {
@@ -81,3 +51,33 @@ $(pause).click(function () {
 $(resume).click(function () {
     chrome.runtime.sendMessage({message: "resume-download"});
 });
+
+function cancelConfirmation(){
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Resume'
+      }).then((result) => {
+        if (result.value) {
+            chrome.runtime.sendMessage({message: "resume-download"});
+            Swal.fire(
+                'Resume',
+                'Your downloads has been resumed.',
+                'success'
+            )
+        }else{
+            data.progress = 0;
+            updateProgressBar(data.progress);
+            chrome.runtime.sendMessage({message: "cancel-download"});
+            Swal.fire(
+                'Cancelled',
+                'Your downloads has been canceled.',
+                'success'
+            )
+        }
+      })
+}

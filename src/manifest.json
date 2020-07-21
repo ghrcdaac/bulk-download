@@ -13,9 +13,9 @@
     "cookies",
     "alarms",
     "https://search.earthdata.nasa.gov/*",
-    "http://search.earthdata.nasa.gov/*"
-    // "https://*/",
-    // "http://*/"
+    "http://search.earthdata.nasa.gov/*",
+    "https://urs.earthdata.nasa.gov/*",
+    "https://cmr.earthdata.nasa.gov/search/*"
   ],
   "web_accessible_resources": ["/images/*", "js/LZStringWorker.js"],
   "icons": {
@@ -23,8 +23,7 @@
     "128": "images/icon128.png"
   },
   "browser_action": {
-    //"default_popup": "popup/popup.html"
-    "default_popup": "html/popup.html"
+    "default_popup": "popup/popup.html"
   },
   "content_scripts": [
     {
@@ -37,11 +36,8 @@
       "js": [
         "lib/jquery-3.4.1.js",
         "lib/jquery.idle/jquery.idle.js",
-        // "lib/download.js",
-        // "lib/lz-string.js",
         "lib/sweetalert2.min.js",
         "lib/ua-parser.min.js",
-        // "js/LSManager.js",
         "js/localStorageManager.js",
         "js/popupManager.js",
         "js/content.js",
@@ -52,10 +48,8 @@
   ],
   "background": {
     "scripts": [
-      // "lib/lz-string.js",
       "lib/sweetalert2.min.js",
       "lib/ua-parser.min.js",
-      // "js/LSManager.js",
       "js/localStorageManager.js",
       "js/popupManager.js",
       "js/bg.js"

@@ -155,16 +155,3 @@ class LocalStorageManager{
     }
      
 }
-
-// "nameSpace"_"myKey"
-
-localStorage = {
-    //other stuff
-    "bulkDownloader_dataSets": ['A', 'B', 'C'],
-    'bulkDownloader_A': ["f"],
-    'bulkDownloader_B': ['df'],
-    'bulkDownloader_C': ['df'],
-    "bulkDownloader_inUse": true,
-    "bulkDownloader_currentDataSet": 'A',
-    "bulkDownloader_loginLinks": ["d"]
-}

@@ -103,8 +103,6 @@ function beginDownload(){
 
 const onLoggedIn = (loginLink, callback) => {
 
-    // console.log(loginLink);
-    // const loginLink = getSingleLink();
     const baseLink = loginLink.match(/^(http)s?:\/\/.[^\/]*\//g)[0];
 
     if(windowIds[baseLink] && !visited[baseLink]){
@@ -286,7 +284,6 @@ function resume(item){
     }else{
         if(item.paused == true){
             chrome.downloads.cancel(item.id);
-            // pushSingleLink(item.url);
         }
     }
 }
@@ -317,7 +314,6 @@ function pauseAll(){
         modifyDownload(i, pause);
     }
 
-    // clearInterval(downloadNextBatchInterval);
 }
 
 function resumeAll(){
@@ -332,7 +328,6 @@ function resumeAll(){
     }
 
     beginDownload();
-    // downloadNextBatchInterval = setInterval(downloadNextBatch, 1000);
 }
 
 function cancelAll(){
@@ -349,8 +344,6 @@ function cancelAll(){
 
     reset();
 
-    // clearInterval(interval);
-    // clearInterval(downloadNextBatchInterval);
 }
 
 function reset(all=false){
