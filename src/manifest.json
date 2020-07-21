@@ -4,7 +4,7 @@
   "manifest_version": 2,
   "description": "Extension Version 4.0",
   "permissions": [
-   
+    "unlimitedStorage",
     "tabs",
     "activeTab",
     "storage",
@@ -12,10 +12,12 @@
     "downloads.open",
     "cookies",
     "alarms",
-    "https://*/",
-    "http://*/"
+    "https://search.earthdata.nasa.gov/*",
+    "http://search.earthdata.nasa.gov/*"
+    // "https://*/",
+    // "http://*/"
   ],
-  "web_accessible_resources": ["/images/*"],
+  "web_accessible_resources": ["/images/*", "js/LZStringWorker.js"],
   "icons": {
     "48": "images/icon48.png",
     "128": "images/icon128.png"
@@ -33,20 +35,29 @@
       ],
       "all_frames": true,
       "js": [
-        "lib/download.js",
-        "lib/lz-string.js",
         "lib/jquery-3.4.1.js",
+        "lib/jquery.idle/jquery.idle.js",
+        // "lib/download.js",
+        // "lib/lz-string.js",
         "lib/sweetalert2.min.js",
         "lib/ua-parser.min.js",
+        // "js/LSManager.js",
+        "js/localStorageManager.js",
+        "js/popupManager.js",
         "js/content.js",
         "js/contentProject.js"
+
       ]
     }
   ],
   "background": {
     "scripts": [
-      "lib/lz-string.js",
+      // "lib/lz-string.js",
+      "lib/sweetalert2.min.js",
       "lib/ua-parser.min.js",
+      // "js/LSManager.js",
+      "js/localStorageManager.js",
+      "js/popupManager.js",
       "js/bg.js"
     ]
   },

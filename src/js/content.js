@@ -1,14 +1,5 @@
-let parser = new UAParser();
 let hasDownloadableLinks = true;
 let lastURL = window.location.href;
-
-const config = {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    characterData: true
-};
-
 
 $(document).ready(function () {
 
@@ -28,7 +19,7 @@ $(document).ready(function () {
                         return true;
                     }
                 })
-                .then(updateButton(hasDownloadableLinks))
+                .then(updateButton())
                 .catch(err => console.error(err));
         
         return updateButtonPromise;
@@ -97,30 +88,22 @@ $(document).ready(function () {
         let downloadPopUp = swal.fire({
             title: 'Loading files for Download',
             showConfirmButton: false,
-            timer: 20000
+            timer: 120000
         });
 
         chrome.runtime.sendMessage({ message: "swal-fire"});
+        lsManager = new LocalStorageManager();
 
         let url = window.location.href;
         let cmrUrl = getCmrQueryLink(url, true);
-        let numberOfGranules = $(".button__badge.badge.badge-secondary").first().text();
-        let numberOfGranulesString = [];
-        numberOfGranulesString = numberOfGranules.split(" ");
-
-        let noOfGranules = 0;
-        if (numberOfGranulesString[0].includes(",")) {
-            noOfGranules = parseInt(numberOfGranulesString[0].replace(/,/g, ""));
-        } else {
-            noOfGranules = parseInt(numberOfGranulesString[0]);
-        }
-
+        let noOfGranules = getNoOfGranules();
         let granulesFetched = 0;
-        let message;
+        let granuleCount = 0;
         let page = 1;
         let numberOfEntries = 0;
         let cmrUrlPaging;
         let cmrLinks = [];
+        let itr = 0;
 
         let downloadInterval = setInterval(() => {
             if (granulesFetched < noOfGranules) {
@@ -131,30 +114,49 @@ $(document).ready(function () {
                     .then(res => res.json())
                     .then((out) => {
                         
-                        let totalMBytes = 0;
                         let entries = out['feed']['entry'];
+                        const dataSetName = "bulkDownloader_" + entries[0].dataset_id;
 
                         numberOfEntries = entries.length;
+                        granuleCount += numberOfEntries;
                         if (numberOfEntries === 0) {
                             swal.fire("Empty Dataset", "Earthdata could not fing any granules for this search query. Please contact Earthdata Help Desk", "error");
                         }
 
-                        //window.granulesFetched = window.granulesFetched + numberOfEntries;
+                        let loginLinks = [];
+
+                        // let randomIndices = generateRandomNumbers(numberOfEntries);
+
                         for (let i = 0; i < numberOfEntries; i++) {
-                            cmrLinks[i] = out.feed.entry[i].links[0].href; //filters all the download links
-                            if(out.feed.entry[i].granule_size){
-                                totalMBytes += parseInt(out.feed.entry[i].granule_size);
+                            cmrLinks[i] = out.feed.entry[i].links[0].href; //filters all the download link
+                            if(itr == 0 && i < 10){ //first 10 link of a dataset
+                                loginLinks.push(cmrLinks[i]);
                             }
                         }
 
-                        chrome.runtime.sendMessage({
-                            startTime: (new Date()).toISOString(),
-                            totalMBytes: totalMBytes,
-                            links: cmrLinks,
-                            number: numberOfEntries,
-                            message: "start-download",
-                        });
+                        lsManager.call(             
+                            lsManager.setItem(dataSetName, cmrLinks, "distinct"),
+                            lsManager.setItem("bulkDownloader_loginLinks", loginLinks, "concat"),
+                            lsManager.setItem("bulkDownloader_dataSets", dataSetName, "distinct")                            
+                        )
+                        .then(() =>{
+                            let firstItr = false;
+                            if(itr == 0){
+                                lsManager.call(lsManager.setItem("bulkDownloader_currentDataSet", dataSetName, "overwrite"));
+                                firstItr = true; 
+                            }
 
+                            // chrome.storage.local.get(null, (item) => console.log(item));
+
+                            chrome.runtime.sendMessage({
+                                granuleCount: noOfGranules,
+                                dataSetName: dataSetName,
+                                firstItr: firstItr,
+                                number: numberOfEntries,
+                                message: "start-download"
+                            })
+                        })
+                        // .catch(err => console.error(err));
 
                     })
                     .catch(err => {
@@ -170,23 +172,37 @@ $(document).ready(function () {
                 page++;
             }
             else {
+                // window.onbeforeunload = null;
+                chrome.runtime.sendMessage({
+                    message: "update-granuleCount",
+                    granuleCount: granuleCount
+                })
                 clearInterval(downloadInterval);
+                chrome.storage.local.get(null, item => console.log(item));
             }
-        }, 1000);
+        }, 50);
 
     }
   
     function addGranuleMutation() {
+
+        const config = {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            characterData: true
+        };
             
         const granulesMutation = $(".button__badge.badge.badge-secondary")[0];
 
         //To check the change in number of granules
         let granuleMutationObserver = new MutationObserver(function (mutations, granuleMutationObserver) {
-            updateButton(hasDownloadableLinks);
+           updateButton();
         });
         
         granuleMutationObserver.observe(granulesMutation, config); //Observes the mutation
-        updateButton(hasDownloadableLinks);
+        updateButton();
+
     }
 
     function appendBulkDownloadButton() {
@@ -206,7 +222,7 @@ $(document).ready(function () {
             let newButton = $("#newBulkDownloadButton");
             let noOfGranules;
 
-            updateButton(hasDownloadableLinks);
+            updateButton();
 
             // //Function for a click listener on the New Bulk Download button
             // newButton.click(function openWin() {
@@ -223,7 +239,7 @@ $(document).ready(function () {
                             loginWindow = window.open('https://urs.earthdata.nasa.gov/', loginWindow, 'width=600,height=600');
                             let loginInterval = window.setInterval(function () {
                                 if (document.cookie.match(/^.*urs_user_already_logged=yes.*$/) ) {
-                                    loginWindow.close();
+                                    if(loginWindow) loginWindow.close();
                                     clearInterval(loginInterval);
                                     downloadFiles();
                                 }
@@ -235,15 +251,15 @@ $(document).ready(function () {
                         }
 
                     })
-                    .catch(err => {
-                        swal.close();
-                        swal.fire({
-                            title: 'Could not fetch login page\nPlease login to URS website and try again',
-                            type: 'error'
-                        });
-                        console.error("Error in fetching Logged in status");
-                        throw err
-                    });
+                    // .catch(err => {
+                    //     swal.close();
+                    //     swal.fire({
+                    //         title: 'Could not fetch login page\nPlease login to URS website and try again',
+                    //         type: 'error'
+                    //     });
+                    //     console.error("Error in fetching Logged in status");
+                    //     throw err
+                    // });
             })
         }
     }
@@ -253,14 +269,21 @@ $(document).ready(function () {
         let buttonCount = $(".granule-results-actions__download-all").find("button").length;
         if (buttonCount === 1 ) {
             appendBulkDownloadButton();
-            addGranuleMutation();
+            addGranuleMutation();            
         }
     }
 
     addMutation();
     interval = setInterval(addMutation, 1000); 
 
-    function updateButton(isDownloadable) {
+    function updateButton() {
+        let isDownloadable;
+        if(getNoOfGranules() != 0 && hasDownloadableLinks){
+            isDownloadable = true;
+        }else {
+            isDownloadable = false;
+        }
+
         if (document.getElementById("newBulkDownloadButton")) {
             newButton = $("#newBulkDownloadButton");
             if (isDownloadable){
@@ -342,4 +365,48 @@ $(document).ready(function () {
                 });
             }
         });
+    
+    $(document).idle({
+        onActive: function(){
+            window.location.reload();
+        },
+        idle:900000
+    });
+
+    // function generateRandomNumbers(limit, count = 5){
+    //     let randomIndices = [];
+    //     const randInt = (max) => {
+    //         return Math.floor(Math.random() * Math.floor(max));
+    //     }
+
+    //     if(limit <= count){
+    //         for(let i = 0; i < limit; i++){
+    //             randomIndices.push(i);
+    //         }
+    //         return randomIndices;
+    //     }else{
+    //         let tempSet = new Set();
+    //         while(tempSet.size <= count){
+    //             tempSet.add(randInt(limit));
+    //         }
+    //         tempSet.forEach(val => randomIndices.push(val));
+    //         randomIndices.sort();
+    //         return randomIndices;
+    //     }
+    // }
+
+    function getNoOfGranules(){
+        let numberOfGranules = $(".button__badge.badge.badge-secondary").first().text();
+        let numberOfGranulesString = [];
+        numberOfGranulesString = numberOfGranules.split(" ");
+
+        let noOfGranules = 0;
+        if (numberOfGranulesString[0].includes(",")) {
+            noOfGranules = parseInt(numberOfGranulesString[0].replace(/,/g, ""));
+        } else {
+            noOfGranules = parseInt(numberOfGranulesString[0]);
+        }
+
+        return noOfGranules;
+    }    
 });

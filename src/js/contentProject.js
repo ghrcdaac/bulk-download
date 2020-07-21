@@ -1,21 +1,21 @@
-let totalMBytes = 0;
+lsManager = new LocalStorageManager();
 
 $(document).ready(function () {
 
+    function getUrlVars(url) {
+        let decodedUrl = decodeURIComponent(url);
+        let vars = {};
+        let parts = decodedUrl.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+            vars[key] = value;
+        });
+        return vars;
+    }
+
     function getCmrFilters(url) {
         //Function to get CMR filter from EDS URL
-        let decodedUrl = decodeURIComponent(url);
-
-        function getUrlVars() {
-            let vars = {};
-            let parts = decodedUrl.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
-                vars[key] = value;
-            });
-            return vars;
-        }
 
         let filter = [];
-        let allConceptIds = getUrlVars()["p"];
+        let allConceptIds = getUrlVars(url)["p"];
         let conceptId = [];
 
         conceptId = allConceptIds.split("!");
@@ -24,12 +24,12 @@ $(document).ready(function () {
         let noOfDatasets = conceptId.length - 1;
         let temporal = [];
         for (let i = 1; i <= noOfDatasets; i++) {
-            temporal[i - 1] = getUrlVars()["pg[" + i + "][qt]"];
+            temporal[i - 1] = getUrlVars(url)["pg[" + i + "][qt]"];
         }
-        let temporalGlobal = getUrlVars()["qt"];
-        let polygon = getUrlVars()["polygon"];
-        let rectangle = getUrlVars()["sb"];
-        let point = getUrlVars()["sp"];
+        let temporalGlobal = getUrlVars(url)["qt"];
+        let polygon = getUrlVars(url)["polygon"];
+        let rectangle = getUrlVars(url)["sb"];
+        let point = getUrlVars(url)["sp"];
         for (let i = 0; i < noOfDatasets; i++) {
 
             filter[i] = {};
@@ -60,7 +60,7 @@ $(document).ready(function () {
         // Function to get CMR link with appropriate filter
         let filter = [];
         filter = getCmrFilters(url);
-        let noOfDatasets = filter.length;;
+        let noOfDatasets = filter.length;
         let baseUrl = "https://cmr.earthdata.nasa.gov/search/granules.json";
         let urls = [];
         for (let i = 0; i < noOfDatasets; i++) {
@@ -84,49 +84,89 @@ $(document).ready(function () {
 
         window.numberOfEntries = 0;
         let cmrUrlPaging = [];
-        for (let i = 0; i < noOfDatasets; i++) {
-            let page = 1;
-            do {
-                cmrUrlPaging[i] = cmrUrls[i] + page;
-                let downloadLink = [];
 
-                fetch(cmrUrlPaging[i])
-                    .then(res => res.json())
-                    .then((out) => {
+        let noOfGranules = getEstimatedGranuleCount();
+        let granuleCount = 0;
+        let completedDatasets = 0;
+        let itr = 0;
 
-                        let entries = out['feed']['entry'];
+        let downloadInterval = setInterval(()=>{
+            if (completedDatasets < noOfDatasets){
+                let page = 1;
+                let i = 0;
+                do {
+                    cmrUrlPaging[i] = cmrUrls[i] + page;
+                    let downloadLink = [];
 
-                        numberOfEntries = entries.length;
-                        if (numberOfEntries === 0) {
-                            swal.fire("Empty Dataset", "Earthdata CMR returned no granules for this search query. Please contact Earthdata Help Desk", "error");
-                        }
+                    fetch(cmrUrlPaging[i])
+                        .then(res => res.json())
+                        .then((out) => {
 
-                        for (let k = 0; k < numberOfEntries; k++) {
-                            downloadLink[k] = out.feed.entry[k].links[0].href; //filters all the download links
-                            if(out.feed.entry[k].granule_size){
-                                totalMBytes += parseInt(out.feed.entry[k].granule_size);
+                            let entries = out['feed']['entry'];
+                            const dataSetName = "bulkDownloader_" + entries[0].dataset_id;
+
+                            numberOfEntries = entries.length;
+                            granuleCount += numberOfEntries;
+                            if (numberOfEntries === 0) {
+                                swal.fire("Empty Dataset", "Earthdata CMR returned no granules for this search query. Please contact Earthdata Help Desk", "error");
                             }
-                        }
 
-                       // downloadPopUp.close();
-                        chrome.runtime.sendMessage({
-                            totalMBytes: totalMBytes,
-                            links: downloadLink,
-                            number: numberOfEntries,
-                            message: "start-download",
-                        }); //send the download links as message to background page
+                            let loginLinks = [];
+
+                            for (let k = 0; k < numberOfEntries; k++) {
+                                downloadLink[k] = out.feed.entry[k].links[0].href; //filters all the download links
+                                if(itr == 0 && i < 10){ //first 10 link of a dataset
+                                    loginLinks.push(downloadLink[k]);
+                                }
+                            }
+
+                            // let dataSet_ids = getUrlVars(window.location.href)['p'].split('!');
+
+                            lsManager.call(             
+                                lsManager.setItem(dataSetName, cmrLinks, "distinct"),
+                                lsManager.setItem("bulkDownloader_loginLinks", loginLinks, "concat"),
+                                lsManager.setItem("bulkDownloader_dataSets", dataSetName, "distinct")                            
+                            )
+                            .then(() =>{
+                                let firstItr = false;
+                                if(itr == 0){
+                                    lsManager.call(lsManager.setItem("bulkDownloader_currentDataSet", dataSetName, "overwrite"));
+                                    firstItr = true; 
+                                }
+    
+                                // chrome.storage.local.get(null, (item) => console.log(item));
+    
+                                chrome.runtime.sendMessage({
+                                    granuleCount: noOfGranules,
+                                    dataSetName: dataSetName,
+                                    firstItr: firstItr,
+                                    number: numberOfEntries,
+                                    message: "start-download"
+                                })
+                            })
+                    
 
 
-                    })
-                    .catch(err => {
-                        console.error("Error in fetching download links");
-                        throw err
-                    });
+                        })
+                        .catch(err => {
+                            console.error("Error in fetching download links");
+                            throw err
+                        });
 
-                page++;
+                    page++;
+                    itr++;
 
-            } while (numberOfEntries !== 0);
-        }
+                } while (numberOfEntries !== 0);
+                completedDatasets++;
+            }else{
+                chrome.runtime.sendMessage({
+                    message: "update-granuleCount",
+                    granuleCount: granuleCount
+                })
+                clearInterval(downloadInterval);
+            }
+
+        }, 1000);
 
     }
 
@@ -172,4 +212,76 @@ $(document).ready(function () {
 
     interval = setInterval(addMutation, 3000);
 
+    function getEstimatedGranuleCount(){
+        let estimatedGranuleCount = 0;
+
+        Array.from(document.getElementsByClassName(
+            "project-collections-item__stats-item project-collections-item__stats-item--granule-count"
+            )).forEach(item => {
+                let temp = item.innerHTML.match(/^(\d+\.?\d?k?)/gm)[0];
+                if(temp.endsWith('k')){
+                    temp = temp.slice(0, -1);
+                    estimatedGranuleCount += parseFloat(temp) * 1000;
+                }else{
+                    estimatedGranuleCount += parseFloat(temp);
+                }
+                
+            })
+        return estimatedGranuleCount;
+    }
+
 });
+
+// for (let i = 0; i < noOfDatasets; i++) {
+//     let page = 1;
+//     do {
+//         cmrUrlPaging[i] = cmrUrls[i] + page;
+//         let downloadLink = [];
+
+//         fetch(cmrUrlPaging[i])
+//             .then(res => res.json())
+//             .then((out) => {
+
+//                 let entries = out['feed']['entry'];
+
+//                 numberOfEntries = entries.length;
+//                 granuleCount += numberOfEntries;
+//                 if (numberOfEntries === 0) {
+//                     swal.fire("Empty Dataset", "Earthdata CMR returned no granules for this search query. Please contact Earthdata Help Desk", "error");
+//                 }
+
+//                 for (let k = 0; k < numberOfEntries; k++) {
+//                     downloadLink[k] = out.feed.entry[k].links[0].href; //filters all the download links
+//                 }
+
+//                 let dataSet_ids = getUrlVars(window.location.href)['p'].split('!');
+
+//                 lsManager.setLinks(dataSet_ids[i], downloadLink, () => {
+//                     chrome.runtime.sendMessage({
+//                         startTime: (new Date()).toISOString(),
+//                         estimatedGranuleCount: estimatedGranuleCount,
+//                         number: numberOfEntries,
+//                         message: "start-download",
+//                     });
+//                 });
+//                 // // downloadPopUp.close();
+//                 // chrome.runtime.sendMessage({
+//                 //     totalMBytes: totalMBytes,
+//                 //     links: downloadLink,
+//                 //     number: numberOfEntries,
+//                 //     message: "start-download",
+//                 // }); //send the download links as message to background page
+
+
+//             })
+//             // .catch(err => {
+//             //     console.error("Error in fetching download links");
+//             //     throw err
+//             // });
+
+//         page++;
+
+//     } while (numberOfEntries !== 0);
+
+
+// }
