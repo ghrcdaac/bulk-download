@@ -373,28 +373,6 @@ $(document).ready(function () {
         idle:900000
     });
 
-    // function generateRandomNumbers(limit, count = 5){
-    //     let randomIndices = [];
-    //     const randInt = (max) => {
-    //         return Math.floor(Math.random() * Math.floor(max));
-    //     }
-
-    //     if(limit <= count){
-    //         for(let i = 0; i < limit; i++){
-    //             randomIndices.push(i);
-    //         }
-    //         return randomIndices;
-    //     }else{
-    //         let tempSet = new Set();
-    //         while(tempSet.size <= count){
-    //             tempSet.add(randInt(limit));
-    //         }
-    //         tempSet.forEach(val => randomIndices.push(val));
-    //         randomIndices.sort();
-    //         return randomIndices;
-    //     }
-    // }
-
     function getNoOfGranules(){
         let numberOfGranules = $(".button__badge.badge.badge-secondary").first().text();
         let numberOfGranulesString = [];

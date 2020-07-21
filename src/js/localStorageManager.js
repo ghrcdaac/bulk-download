@@ -56,6 +56,7 @@ class LocalStorageManager{
                     console.log(dataSet);
                     resolve(this.getItem(dataSet, true, false, true));
                 })
+                .catch(err => console.error(err));
 
         });
     }
@@ -72,6 +73,7 @@ class LocalStorageManager{
                         resolve (this.getNextBatch());
                     }
                 })
+                .catch(err => console.error(err));
         });
     }
 
@@ -89,8 +91,6 @@ class LocalStorageManager{
         return new Promise (resolve => {
             this.getItem(key, false, false)
                 .then(item => {
-                    // console.log(typeof item[key], item);
-                    // console.log(`${item}, ${key}, ${method}, ${typeof item[key].concat}, ${typeof value.concat}`);
 
                     if(typeof item[key] === "undefined"){
                         resolve(this.setItem(key, value, "overwrite"));
@@ -107,9 +107,7 @@ class LocalStorageManager{
                     else if(method == "concat" && typeof item[key].concat === "function"
                         && typeof value.concat === "function"
                     ){
-                        // console.log(key, item[key]);
                         item[key] = item[key].concat(value);
-                        // console.log(item[key]);   
                     }
 
                     resolve(this.setItem(key, item[key], "overwrite"));
@@ -138,27 +136,21 @@ class LocalStorageManager{
     }
 
     call(...promises){
-        let result = null;
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             this.getItem("bulkDownloader_inUse", true, false)
                 .then(inUse =>{
                     if(!inUse){
-                        this.setItem("bulkDownloader_inUse", true, "overwrite")
+                        return(this.setItem("bulkDownloader_inUse", true, "overwrite")
                             .then(()=> Promise.all([...promises])
                             .then(values => {
                                 this.setItem("bulkDownloader_inUse", false, "overwrite");
                                 resolve(values);    
-                            }));
-                            // .catch(err => {
-                            //     console.error(err);
-                            //     reject();                                
-                            // })
+                            })))
                     }else{
-                        // console.log("how?");
-                        setTimeout(() => resolve(this.call(...promises)), 1000);
+                        return setTimeout(() => resolve(this.call(...promises)), 1000);
                     }
             })
-            // .catch(err => console.error(err));
+            .catch(err => console.error(err));
         })
     }
      

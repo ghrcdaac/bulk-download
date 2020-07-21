@@ -45,8 +45,6 @@ window.isInit = function () {
 
 let initDownload = function (request) {
 
-    // console.log("initDownload");
-
     if(request.firstItr){
         popupManager = new PopupManager(request.granuleCount)
         
@@ -62,17 +60,15 @@ let initDownload = function (request) {
         lsManager.getItem("bulkDownloader_loginLinks", true, true, false)
     ).then((result) => {
         let loginLinks = result[0];
-        // console.log("loginlinks", loginLinks, result);
         while(loginLinks.length != 0){
             onLoggedIn(loginLinks.pop(), () =>{
                 if(!downloadData.downloadsInProgress){ //if downloads are ongoing
                     beginDownload();
                     downloadData.downloadsInProgress = true;
                 }
-                // console.log("onLoggedIn callback")
             });
         }
-    })
+    }).catch(err => console.error(err));
 
     downloadData.update(request);
 
@@ -86,20 +82,17 @@ function beginDownload(){
     .then((result) => {
         let downloadLinks = result[0];
         if(downloadLinks && downloadLinks.length !== 0){
-            // console.log("my download Links");
             downloadInterval = setInterval(() =>{
                 if(downloadLinks.length !== 0){
                     updateDownloadIds();
                     download(downloadLinks.shift());
-                    // console.log('yess!!')
                 }else{
                     beginDownload();
                 }
             }, 1000);
         }else{
             clearInterval(downloadInterval);
-            chrome.storage.local.clear(lsManager.initStorage);
-            // console.log("All download links served");
+            chrome.storage.local.clear(() => lsManager.initStorage());
         }
 
     })
@@ -392,5 +385,3 @@ function updateDownloadIds(){
     cancelledJobs[jobId] = false;
     pausedJobs[jobId] = false;
 }
-
-// chrome.storage.onChanged.addListener((changes, areaname) => console.log(changes, areaname));
