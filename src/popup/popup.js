@@ -38,6 +38,7 @@ function updateDownloadStats(stats){
         document.getElementById("finishedCount").innerHTML = stats.completed;
         document.getElementById("failedCount").innerHTML = stats.interrupted;
         updateProgressBar(stats.progress);
+        updateErrorLogLink();
     }
 }
 
@@ -51,6 +52,17 @@ function updatePopup() {
         });
     }
 
+}
+
+function updateErrorLogLink(){
+    if(data.failed.length === 0){
+        $("#errorLogLink").attr("disabled", "disabled");
+        $("#errorLogLink").removeAttr("href");
+    }else{
+        $("#errorLogLink").removeAttr("disabled");
+        $("#errorLogLink").attr("href", "#nav-panel");
+
+    }
 }
 
 function resetPopup(){
@@ -73,6 +85,8 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
 });
 
 function popup(){
+
+    updateErrorLogLink();
 
     $(cancel).click(function() {
         chrome.runtime.sendMessage({ message: "pause-download" });
@@ -186,6 +200,7 @@ function errorlogs(){
 
     const fileURL = document.URL;
     if (fileURL.substring(fileURL.lastIndexOf('/') + 1) == "errorlog.html"){
+
         (function getErrorLogs(){
 
             if (loggedErrors.length === data.failed.length){

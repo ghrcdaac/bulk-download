@@ -39,7 +39,8 @@ let totalJobs = 0;
 let jobId = 0;
 
 const lsManager = new LocalStorageManager();
-lsManager.initStorage();
+chrome.storage.local.clear(() => lsManager.initStorage());
+// lsManager.initStorage();
 
 if ((new UAParser()).getBrowser().name === "Firefox") {
     chrome = browser;
