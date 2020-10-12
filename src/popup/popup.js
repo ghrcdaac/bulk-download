@@ -54,13 +54,13 @@ function updatePopup() {
 
 }
 
-function updateErrorLogLink(){
-    if(data.failed.length === 0){
+function updateErrorLogLink(override = false){
+    if(override || data.failed.length === 0){
         $("#errorLogLink").attr("disabled", "disabled");
         $("#errorLogLink").removeAttr("href");
     }else{
         $("#errorLogLink").removeAttr("disabled");
-        $("#errorLogLink").attr("href", "#nav-panel");
+        $("#errorLogLink").attr("href", "errorlog.html");
 
     }
 }
@@ -70,6 +70,7 @@ function resetPopup(){
         message: "update-popup",
         action: "reset-popup"
     })
+    updateErrorLogLink(true);
 }
 
 chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
