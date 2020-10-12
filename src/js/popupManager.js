@@ -1,8 +1,8 @@
 class PopupManager{
 
-    constructor(totalNoofFiles){        
+    constructor(){        
         this.data = {
-            totalNoofFiles: totalNoofFiles,
+            totalNoofFiles: 0,
             completed: 0,
             in_progress: 0,
             interrupted: 0,
@@ -13,36 +13,38 @@ class PopupManager{
         chrome.downloads.onChanged.addListener((delta) => this.countDownloads(delta));
     }
 
-    downloadsInProgress(){
-        if(this.getProgress() > 0 && this.getProgress() < 100){
-            return true;
-        }else if(this.getProgress() == 0 && this.data.totalNoofFiles && this.data.totalNoofFiles != 0){
-            return true
-        }else{
-            return false;
-        }
-    }
-
     getProgress(){
         return this.data.progress;
     }
 
     countDownloads(delta){
         if(delta.state && delta.state.previous == "in_progress"){
+            
             if(delta.state.current == "complete"){
                 this.data.completed += 1;
-                console.log(`${delta.state.current} ${delta.id}`);
+                // console.log(`${delta.state.current} ${delta.id}`);
                 
             }else if(delta.state.current == "interrupted"){
-                if(delta.error.current != "USER_CANCELED"){
+               if(delta.error.current != "USER_CANCELED"){
                     this.data.interrupted += 1;
                     this.data.failed.push(delta);
                 }
-                console.log(delta);
             }
             this.updatePending();
             this.calcProgess();
             this.postPogress();
+
+            
+            if(this.getProgress() >= 100){
+                console.log(this.getProgress());
+                console.log("pop up download complete");
+                const downloadcomplete = new CustomEvent('ondownloadcomplete', {
+                    detail:{
+                        progress: 100
+                    }
+                })
+                window.dispatchEvent(downloadcomplete);
+            }
         }
     }
 
@@ -65,14 +67,18 @@ class PopupManager{
         }
     }
 
-    reset(){
-        this.data = {
-            totalNoofFiles: 0,
-            completed: 0,
-            in_progress: 0,
-            interrupted: 0,
-            progress: 0,
-            failed:[]
+    reset(clearStats = false){
+        
+        if (clearStats){
+            this.data = {
+                totalNoofFiles: 0,
+                completed: 0,
+                in_progress: 0,
+                interrupted: 0,
+                progress: 0,
+                failed:[]
+            }
+            
         }
         chrome.downloads.onChanged.removeListener(() => this.countDownloads);
     }

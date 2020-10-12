@@ -7,7 +7,7 @@ class LocalStorageManager{
     }
 
     getItem(key, onlyValue = false, errorHandling = true, erase = false){
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             chrome.storage.local.get(key, item => {
 
                 // console.log(key, item);
@@ -28,10 +28,8 @@ class LocalStorageManager{
                     
                     return value;
                 }
-                else{
-                
-                    // console.log(key, "got rejected");
-                    reject();
+                else{  
+                    return null;
                 }
             })
         })
@@ -42,19 +40,17 @@ class LocalStorageManager{
     }
 
     getNextBatch(){
-        return new Promise(resolve =>{
+        return new Promise((resolve, reject) =>{
             this.get("bulkDownloader_dataSets")
                 .then( dataSets => {
-                    if(dataSets.length != 0){
+                    if( dataSets && dataSets.length != 0){
                         const currentDataSet = dataSets.shift();
                         this.setItem("bulkDownloader_dataSets", dataSets, "overwrite");
                         this.setItem("bulkDownloader_currentDataSet", currentDataSet, "overwrite");
-                        return(currentDataSet);
+                        resolve(this.getItem(currentDataSet, true, false, true));
+                    }else{
+                        resolve(null);
                     }
-                })
-                .then((dataSet) => {
-                    console.log(dataSet);
-                    resolve(this.getItem(dataSet, true, false, true));
                 })
                 .catch(err => console.error(err));
 
@@ -152,6 +148,18 @@ class LocalStorageManager{
             })
             .catch(err => console.error(err));
         })
+    }
+
+    putback(links){
+        this.get("bulkDownloader_currentDataSet")
+            .then(currentDataset => {
+                return this.call(
+                    this.setItem(
+                        "bulkDownloader_" + currentDataset,
+                        links
+                    )
+                )
+            })
     }
      
 }

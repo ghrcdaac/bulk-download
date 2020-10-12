@@ -1,59 +1,55 @@
 {
-  "name": "Earth Data Bulk Downloader",
-  "version": "1.0",
-  "manifest_version": 2,
-  "description": "Extension Version 4.0",
-  "permissions": [
-    "unlimitedStorage",
-    "tabs",
-    "activeTab",
-    "storage",
-    "downloads",
-    "downloads.open",
-    "cookies",
-    "alarms",
-    "https://search.earthdata.nasa.gov/*",
-    "http://search.earthdata.nasa.gov/*",
-    "https://urs.earthdata.nasa.gov/*",
-    "https://cmr.earthdata.nasa.gov/search/*"
-  ],
-  "web_accessible_resources": ["/images/*", "js/LZStringWorker.js"],
-  "icons": {
-    "48": "images/icon48.png",
-    "128": "images/icon128.png"
-  },
-  "browser_action": {
-    "default_popup": "popup/popup.html"
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "https://search.earthdata.nasa.gov/*",
-        "https://urs.earthdata.nasa.gov/*",
-        "https://cmr.earthdata.nasa.gov/search/*"
-      ],
-      "all_frames": true,
-      "js": [
-        "lib/jquery-3.4.1.js",
-        "lib/jquery.idle/jquery.idle.js",
-        "lib/sweetalert2.min.js",
-        "lib/ua-parser.min.js",
-        "js/localStorageManager.js",
-        "js/popupManager.js",
-        "js/content.js",
-        "js/contentProject.js"
-
-      ]
-    }
-  ],
-  "background": {
-    "scripts": [
-      "lib/sweetalert2.min.js",
-      "lib/ua-parser.min.js",
-      "js/localStorageManager.js",
-      "js/popupManager.js",
-      "js/bg.js"
-    ]
-  },
-  "content_security_policy": "script-src 'self'  ; object-src 'self'"
+    "name": "Earth Data Bulk Downloader",
+    "version": "1.0",
+    "manifest_version": 2,
+    "description": "Extension Version 4.0",
+    "permissions": [
+        "identity",
+        "unlimitedStorage",
+        "tabs",
+        "activeTab",
+        "storage",
+        "downloads",
+        "downloads.open",
+        "cookies",
+        "https://urs.earthdata.nasa.gov/",
+        "https://cmr.earthdata.nasa.gov/search/*",
+        "http://search.earthdata.nasa.gov/*"
+    ],
+    "web_accessible_resources": ["/images/*", "popup/popup.html"],
+    "icons": {
+        "48": "images/icon48.png",
+        "128": "images/icon128.png"
+    },
+    "browser_action": {
+        "default_popup": "popup/popup.html"
+    },
+    "content_scripts": [{
+        "matches": [
+            "https://search.earthdata.nasa.gov/*"
+        ],
+        "all_frames": true,
+        "js": [
+            "lib/jquery-3.4.1.js",
+            "lib/jquery.idle/jquery.idle.js",
+            "lib/sweetalert2.min.js",
+            "lib/ua-parser.min.js",
+            "lib/popper.min.js",
+            "lib/bootstrap.min.js",
+            "js/localStorageManager.js",
+            "js/popupManager.js",
+            "js/content.js"
+        ]
+    }],
+    "background": {
+        "scripts": [
+            "lib/sweetalert2.min.js",
+            "lib/ua-parser.min.js",
+            "js/localStorageManager.js",
+            "js/OAuthManager.js",
+            "js/popupManager.js",
+            "js/bg.js"
+        ]
+    },
+    "content_security_policy": "script-src 'self'  ; object-src 'self'"
 }

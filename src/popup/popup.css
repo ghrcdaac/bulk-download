@@ -1,75 +1,163 @@
-*{
-  box-sizing: border-box;
+* {
+    box-sizing: border-box;
 }
-body{
-    margin: 0;
-    /* background-image: url("D:/Projects/web application/Hagati/my portfolio/portfolio/images/Anupam.jpg"); */
-    background-size: cover;
-    background-repeat: no-repeat;
-    height: 200px;
-    width: 350px;
-    display: flex;
-    flex-direction: column;
+
+html {
+    height: auto;
+    width: auto;
+    overflow: scroll;
+}
+
+body {
+    background: linear-gradient(to bottom, #ffffff 0%, #959595 100%);
+    width: 365px;
+    height: 340px;
+    overflow-y: auto;
     padding-left: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
     /* align-items: center; */
 }
 
-.buttons {
+#heading {
     display: flex;
-    flex-direction: row;
+    justify-content: center;
+}
+
+h2 {
+    font-weight: bold;
+    font-size: 19px;
+    margin: 14px;
+    margin-right: 7px;
+    float: left;
+    padding-left: 15px;
+}
+
+#folder-settings {
+    float: right;
+    font-size: 1.5em;
+    padding-left: 5px;
+    margin: 10px;
+    height: 35px;
+    width: 35px;
+    border-radius: 50%;
+}
+
+h3 {
+    font-size: 14px;
+}
+
+h4 {
+    font-size: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 8px 9px;
+}
+
+.search-box {
+    margin: 10px;
+    height: 25px;
+}
+
+.settings {
+    font-size: 2em;
+}
+
+.form-control {
+    height: 25px;
+}
+
+.container {
+    display: flex;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+}
+
+.dataset-name {
+    font-weight: bold;
+    font-size: 15px;
+    margin-left: 10px;
+}
+
+hr {
+    color: black;
+    background-color: black;
+    border-style: inset;
+    border-width: 1.5px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.buttons {
+    text-align: center;
+    margin-right: 20px;
+    margin-left: 20px;
 }
 
 .btn {
-    background-color: DodgerBlue;
-    border: none;
-    color: white;
+    padding: 0.5px;
+    font-size: 2.5rem;
+    border-radius: 80%;
+    box-shadow: 4px 4px 3px rgb(83, 83, 83);
+}
+
+#destination {
+    font-size: 1em;
+}
+
+.progress {
+    margin-left: 20px;
+    margin-right: 20px;
+    box-shadow: 4px 4px 3px rgb(78, 78, 78);
+}
+
+h6 {
+    font-size: 10px;
+    text-align: right;
+    margin-right: 20px;
     padding: 8px 9px;
-    font-size: 12px;
-    cursor: pointer;
-    display: flex;
-    margin-left: 10px;
-    width: 100px;
-    height: 30px;
-
 }
 
-/* Darker background on mouse-over */
-.button:hover {
-    background-color: RoyalBlue;
+.granule-count {
+    border-radius: 4px;
+    background: rgb(201, 208, 209);
+    padding: 2px 8px;
+    width: 4px;
+    height: 1px;
 }
 
-.Progress_Status{
-    display: flex;
-    width: 100%;
-    background-color: #ddd;
+#page-container {
+    position: relative;
 }
 
-#cancel{
-    display: flex;
-    width: 90px;
-}
-
-#progress_bar {
-    display: flex;
-    width: 0%;
-    height: 100%;
-    background-color: #4CAF50;
-    text-align: center;
-    line-height: 32px;
-    color: black;
-}
-
-.heading{
+#content-wrap {
     display: flex;
     flex-direction: column;
-    align-items: center;
 }
 
-.sub_heading{
-    display: flex;
-    align-self: flex-end;
-    text-align: right;
-    font-size: xx-small;
+#footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    clear: both;
+    text-align: center;
+    font-size: 15px;
+    margin: 0px;
+    padding: 2px;
+    overflow-y: auto;
+}
+
+.swal-button {
+    background: rgb(7, 128, 145);
+}
+
+.swal-button--red {
+    background: rgb(236, 104, 144);
+}
+
+.swal-button--green {
+    background: rgb(0, 128, 96);
 }
