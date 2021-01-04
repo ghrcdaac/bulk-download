@@ -2,7 +2,7 @@
     "name": "Earth Data Bulk Downloader",
     "version": "1.0",
     "manifest_version": 2,
-    "description": "Test Extension",
+    "description": "Bulk Downloader Extension for NASA's EarthData Website",
     "options_page": "popup/settings.html",
     "permissions": [
         "identity",
@@ -17,7 +17,7 @@
         "https://*/",
         "http://*/"
     ],
-    "web_accessible_resources": ["/images/*", "popup/*", "../docs/*"],
+    "web_accessible_resources": ["/images/*", "popup/*"],
     "icons": {
         "48": "images/icon48.png",
         "128": "images/icon128.png"
@@ -58,8 +58,8 @@
             "js/backgroundscripts/CMRManager.js",
             "js/backgroundscripts/AuthenticationManager.js",
             "js/backgroundscripts/DownloadStats.js",
-            "js/backgroundscripts/TestDownloadManager.js",
-            // "js/backgroundscripts/DownloadManager.js",
+            // "js/backgroundscripts/TestDownloadManager.js",
+            "js/backgroundscripts/DownloadManager.js",
             "js/backgroundscripts/backgroundscript.js"
         ]
     },
