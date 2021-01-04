@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Settings Page</title>
+    
+    <link rel="stylesheet" href="settings.css">
+    <script type="text/javascript" src="../lib/jquery-3.4.1.js"></script>
+    <link href="../lib/fontawesome/css/all.css" rel="stylesheet">
+    <script type="text/javascript" src="../lib/fontawesome.js"></script>
+    
+
+</head>
+
+<body>
+
+
+    <div class="container">
+        <div class="leftbox">
+            <nav>
+                <a class="tab active" id="aboutUs">
+                    <i class="fas fa-info"></i>
+                </a>
+                <a class="tab" id="errorLogs">
+                    <i class="fal fa-exclamation-triangle"></i>
+                </a>
+            </nav>
+        </div>
+        <div class="rightbox">
+            <div class="aboutUS tabShow" id="rightbox-aboutUS">
+                
+                <main>
+                    <div class="tittle">
+                        About Us
+                        
+                    </div>
+                                    
+                    <div class="content">
+
+                        <p>
+                            With the loss of anonymous FTP, options for downloading data has become more difficult more most users.  In 2018, the Data Use Team lead an effort to explore better methods for downloading data.
+                        </p>
+                        
+                        <p>
+                            To solve this problem, EarthData Bulk Downloader was created for
+                            the NASA EarthData Search Client website
+                            by Information Technology Systems Center 
+                            at The University of Alabama in Huntsville.
+                        </p>
+    
+                    </div>
+    
+                    <div class="referenecs">
+                        <p>
+                            <a href="docs/Bulk-Downloader-Installation-and-Testing-Guide.pdf" target="_blank">Installation and Testing Guide</a>
+                        </p>
+                        
+                        <p>
+                            <a href="docs/Bulk-Downloader-How-To-Guide.pdf" target="_blank">User Documentation</a>
+                        </p>
+    
+                        <p>
+                            <a href="docs/Bulk-Downloader-FAQs.pdf" target="_blank">FAQ</a>
+                        </p>
+                    </div>
+                </main>
+
+                <footer>
+                    <div class="logo">
+                        <div class="itsc logo">
+                            <img src="img/itsc.png" alt="" height="85px" width="155px">
+    
+                        </div>                    
+                        <div class="nasa logo">
+                            <img src="img/nasa-blue.png" alt="" height="100px" width="115px">
+    
+                        </div>                    
+                        <div class="uah logo">
+                            <img src="img/uah.png" alt="" height="100px" width="165px">
+    
+                        </div>                    
+                    </div>
+                </footer>
+                
+
+            </div>
+
+            <div class="errorlog tabShow" id="rightbox-errorLogs">
+                <table class="table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="filename">Filename</th>
+                            <th scope="col" class="interruptedReason">Interrupt Reason</th>
+                        </tr>
+                              
+
+                    </thead>
+                    <tbody id="errorLogBody">
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+    </div>
+
+    
+</body>
+
+<script type="text/javascript" src="popup.js"></script>
+<script type="text/javascript" src="settings.js"></script>
+
+</html>
