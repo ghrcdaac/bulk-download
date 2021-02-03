@@ -4,20 +4,29 @@
     <title>Popup</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <script type="text/javascript" src="../lib/jquery-3.4.1.js"></script>
-    <!-- <script type="text/javascript" src="../lib/lz-string.js"></script> -->
-    <script type="text/javascript" src="../lib/download.js"></script>
-
+    <link href="../lib/fontawesome/css/all.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="popup.css" />
     <script type="text/javascript" src="../lib/fontawesome.js"></script>
     <script type="text/javascript" src="../lib/sweetalert.min.js"></script>
+    <script type="text/javascript" src="../lib/popper.min.js"></script>
+    <script type="text/javascript" src="../lib/bootstrap.min.js"></script>
+    <script type="text/javascript" src="popup.js"></script>
+
     <meta charset="utf-8" />
+    <!-- <script type="text/javascript" src="../lib/download.js"></script> -->
 </head>
 
 <body>
     <div id="page-container">
         <div id="content-wrap">
             <div id="heading">
-                <h2>Earthdata Bulk Downloader</h2>
+                
+                <div id="nasa-logo">
+                    <img src="img/nasa-sketch.png" alt="" height="50px" >
+                </div>
+                <div id="bulk-download-logo">
+                    <img src="img/bulk-download-main.png" alt="" height="50px" >
+                </div>
 
 
                 <div title="Folder settings" class="btn-group dropleft" style="text-align: right;">
@@ -30,13 +39,16 @@
                         <a class="dropdown-item" href="#" id="destination"><i class="far fa-folder-open"></i> Show
                             downloads</a>
                         <a class="dropdown-item" href="#" id="clearPopup"><i class="fas fa-broom"></i> Clear pop-up</a>
+                        <a class="dropdown-item" href="#" id="aboutUs"><i class="fas fa-info"></i> &nbsp &nbsp About Us</a>
+                        <a class="dropdown-item" href="#" id="reload"><i class="fa fa-refresh"></i> &nbsp Reload</a>
+                        
+                        <!-- <a class="dropdown-item" href="#" id="errorlog"><i class="fal fa-exclamation-triangle"></i></i> Error Logs</a> -->
                     </div>
                 </div>
             </div>
             <div class="search-box">
                 <input class="form-control mr-sm-2" id="searchBar" type="search" placeholder="Search..." aria-label="Search">
             </div>
-
 
             <div class="dataset-name" id="datasetName">No Downloads in Progress</div>
             <hr>
@@ -48,9 +60,14 @@
                 <button title="Resume all downloads" type="button" class="btn " id="resume">
                     <i class="far fa-play-circle"> </i>
                 </button>
+
                 <button title="Cancel all downloads" type="button" class="btn " id="cancel">
-                    <i class="far fa-times-circle"></i>
+                    <i class="far fa-times-circle"> </i>
                 </button>
+                
+                <!-- <button title="Retry all downloads" type="button" class="btn " id="retry">
+                    <i class="fas fa-undo"> </i>
+                </button> -->
 
             </div>
             <br>
@@ -62,13 +79,9 @@
     <div id="footer">
         Pending: <span class="granule-count" id="pendingCount">0</span> | 
         Completed: <span class="granule-count" id="finishedCount">0</span> | 
-        <a id="errorLogLink" href="errorlog.html">Failed: <span class="granule-count" id="failedCount">0</span></a>
+        <a id="errorLogLink">Failed: <span class="granule-count" id="failedCount">0</span></a>
     </div>
+
 </body>
-
-<script type="text/javascript" src="../lib/popper.min.js"></script>
-<script type="text/javascript" src="../lib/bootstrap.min.js"></script>
-<script type="text/javascript" src="popup.js"></script>
-
 
 </html>

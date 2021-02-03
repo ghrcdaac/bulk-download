@@ -21,7 +21,8 @@ body {
 
 #heading {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
+    margin-top: 15px;
 }
 
 h2 {
@@ -101,6 +102,10 @@ hr {
     border-radius: 80%;
     box-shadow: 4px 4px 3px rgb(83, 83, 83);
 }
+
+/* .btn > i  {
+    height: 10px;
+}  */
 
 #destination {
     font-size: 1em;

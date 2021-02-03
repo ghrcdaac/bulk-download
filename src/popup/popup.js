@@ -1,25 +1,31 @@
 let data = {
-    totalNoofFiles: 0,
-    completed: 0,
-    in_progress: 0,
-    interrupted: 0,
-    progress: 0,
-    failed: []
-};
+    stats: {
+        totalNoofFiles: 0,
+        completed: 0,
+        in_progress: 0,
+        interrupted: 0,
+        progress: 0,
+        failed: []
+    },
+    loggedErrors: {},
+    state: "idle"
+}
 
-let loggedErrors = {};
 let datasetName = 'Sample name';
 let clearDatasetName = 'No Downloads in Progress';
 
 updatePopup();
 
 $(document).ready(function() {
-    updatePopup();
+    // updatePopup();
     const fileURL = document.URL
 
     if(fileURL.substring(fileURL.lastIndexOf('/') + 1) == "popup.html"){
         popup();
-    }else if (fileURL.substring(fileURL.lastIndexOf('/') + 1) == "errorlog.html"){
+    }
+    
+    if (fileURL.match(/(settings.html)/g)){
+        console.log("haha");
         errorlogs();
     }
 });
@@ -43,8 +49,8 @@ function updateDownloadStats(stats){
 }
 
 function updatePopup() {
-    if (data.progress >= 100) {
-        data.progress = 0;
+    if (data.stats.progress >= 100) {
+        data.stats.progress = 0;
     } else {
         chrome.runtime.sendMessage({
             message: "update-popup",
@@ -55,12 +61,38 @@ function updatePopup() {
 }
 
 function updateErrorLogLink(override = false){
-    if(override || data.failed.length === 0){
-        $("#errorLogLink").attr("disabled", "disabled");
-        $("#errorLogLink").removeAttr("href");
+    if(override || data.stats.failed.length === 0){
+
+        $("#errorLogLink").hover(function(){
+            $(this).css("cursor", "auto")
+        });
+
+        $("#errorLogLink").css({
+            "color": "null",
+            "text-decoration": "null"
+        })
+
+        $("#errorLogLink").prop("click", null).off("click");
     }else{
-        $("#errorLogLink").removeAttr("disabled");
-        $("#errorLogLink").attr("href", "errorlog.html");
+
+        // $("#errorLogLink").removeAttr("disabled");
+        $("#errorLogLink").hover(function(){
+            $(this).css("cursor", "pointer")
+        });
+
+        $("#errorLogLink").css({
+            "color": "#1f70a3",
+            "text-decoration": "underline"
+        })
+        
+        $("#errorLogLink").prop("click", null).off("click");
+
+        $("#errorLogLink").click(() =>{
+            chrome.runtime.sendMessage({
+                message: "log-errors"
+            })
+            
+        });
 
     }
 }
@@ -78,9 +110,9 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
         typeof(message) === "object" &&
         message.message == "update-popup-progress"
     ) {
-        data = message.data;
-        console.log(data);
-        updateDownloadStats(data);
+        data.stats = message.data;
+        console.log(data.stats);
+        updateDownloadStats(data.stats);
         errorlogs();
     }
 });
@@ -89,16 +121,20 @@ function popup(){
 
     updateErrorLogLink();
 
-    $(cancel).click(function() {
+    $("#cancel").click(function() {
+        // chrome.runtime.sendMessage({ message: "cancel-download" });
         chrome.runtime.sendMessage({ message: "pause-download" });
         cancelConfirmation();
     });
-    $(pause).click(function() {
+    $("#pause").click(function() {
         chrome.runtime.sendMessage({ message: "pause-download" });
     });
-    $(resume).click(function() {
+    $("#resume").click(function() {
         chrome.runtime.sendMessage({ message: "resume-download" });
     });
+    $("#retry").click(function(){
+        chrome.runtime.sendMessage({ message: "retry-download" });
+    })
     $(destination).click(function() {
         chrome.downloads.showDefaultFolder()
     });
@@ -130,6 +166,40 @@ function popup(){
                 console.log(value);
             });
     });
+    $(reload).click(function() {
+        swal({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            buttons: {
+                red: {
+                    text: "Reload Extension",
+                    value: true
+                },
+                green: {
+                    text: "Cancel",
+                    value: false
+                }
+            },
+        })
+        .then((value) => {
+            if (value) {
+                swal({
+                    title: "See you!",
+                    text: "Reloadling the Extension",
+                    icon: "success",
+                })
+                chrome.runtime.sendMessage({ message: "reload-extension" });
+
+            }else{
+                swal({
+                    title: "Cancelled!",
+                    text: "Extension not reloaded",
+                    icon: "error"
+                })
+            }
+        });
+
+    });
     $(clearPopup).click(function() {
         chrome.storage.sync.set({ 'datasetName': clearDatasetName });
         document.getElementById("datasetName").innerHTML = clearDatasetName;
@@ -139,6 +209,9 @@ function popup(){
         updateProgressBar(0);
         resetPopup();
     });
+    $(aboutUs).click(function() {
+        chrome.runtime.openOptionsPage()
+    })
     $("#searchBar").on("keyup", function() {
         var value = $(this).val().toLowerCase();
         $("#datasetName").filter(function() {
@@ -172,8 +245,8 @@ function popup(){
                     })
                 }
                 if (value == "cancel") {
-                    // data.progress = 0;
-                    updateProgressBar(data.progress);
+                    // data.stats.progress = 0;
+                    updateProgressBar(data.stats.progress);
                     chrome.runtime.sendMessage({ message: "cancel-download" });
                     swal({
                         title: "Cancelled!",
@@ -195,23 +268,57 @@ function popup(){
         }
     });
 
+    // async function changeButtons(){
+
+    //     function showButton(...button){
+    //         $("btn").hide();
+            
+    //         if(button.length !== 0){
+    //             button.forEach(btn => {
+                    
+    //                 if (typeof btn == "string"){
+    //                     if(btn[0] !== '#'){
+    //                         btn = '#' + btn;
+    //                     }
+    //                     $(btn).show();
+    //                 }else{
+    //                     throw `${btn} is not a string!`
+    //                 }
+    //             })
+    //         }
+    //     }
+    //     const state =  await lsManager.get(state);
+    //     if(state === "idle"){
+    //         //hide all buttons
+    //         showButton();
+    //     }else if (state === "downloading"){
+    //         //show cancel and pause buttons
+    //         showButton("cancel", "pause");
+    //     }else if (state === "paused"){
+    //         //show cancel and resume buttons
+    //         showButton("cancel", "resume");
+    //     }else if(state === "disconnected"){
+    //         //show cancel and retry button
+    //         showButton("cancel", "retry")
+    //     }
+    // }
 }
 
 function errorlogs(){
 
     const fileURL = document.URL;
-    if (fileURL.substring(fileURL.lastIndexOf('/') + 1) == "errorlog.html"){
+    if (fileURL.match(/(settings.html)/g)){
 
         (function getErrorLogs(){
 
-            if (loggedErrors.length === data.failed.length){
+            if (data.loggedErrors.length === data.stats.failed.length){
                 return;
             }
 
-            for (let i = 0; i < data.failed.length; i++) {
-                if(loggedErrors[data.failed[i].id] !== true){
-                    logError(data.failed[i]);
-                    loggedErrors[data.failed[i].id] = true;
+            for (let i = 0; i < data.stats.failed.length; i++) {
+                if(data.loggedErrors[data.stats.failed[i].id] !== true){
+                    logError(data.stats.failed[i]);
+                    data.loggedErrors[data.stats.failed[i].id] = true;
                 }
             }
         })();

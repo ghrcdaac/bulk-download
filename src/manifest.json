@@ -2,9 +2,11 @@
     "name": "Earth Data Bulk Downloader",
     "version": "1.0",
     "manifest_version": 2,
-    "description": "Extension Version 4.0",
+    "description": "Bulk Downloader Extension for NASA's EarthData Website",
+    "options_page": "popup/settings.html",
     "permissions": [
         "identity",
+        "notifications",
         "unlimitedStorage",
         "tabs",
         "activeTab",
@@ -12,11 +14,10 @@
         "downloads",
         "downloads.open",
         "cookies",
-        "https://urs.earthdata.nasa.gov/",
-        "https://cmr.earthdata.nasa.gov/search/*",
-        "http://search.earthdata.nasa.gov/*"
+        "https://*/",
+        "http://*/"
     ],
-    "web_accessible_resources": ["/images/*", "popup/popup.html"],
+    "web_accessible_resources": ["/images/*", "popup/*"],
     "icons": {
         "48": "images/icon48.png",
         "128": "images/icon128.png"
@@ -24,31 +25,42 @@
     "browser_action": {
         "default_popup": "popup/popup.html"
     },
-    "content_scripts": [{
-        "matches": [
-            "https://search.earthdata.nasa.gov/*"
-        ],
-        "all_frames": true,
-        "js": [
-            "lib/jquery-3.4.1.js",
-            "lib/jquery.idle/jquery.idle.js",
-            "lib/sweetalert2.min.js",
-            "lib/ua-parser.min.js",
-            "lib/popper.min.js",
-            "lib/bootstrap.min.js",
-            "js/localStorageManager.js",
-            "js/popupManager.js",
-            "js/content.js"
-        ]
-    }],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://search.earthdata.nasa.gov/search/*",
+                "https://search.uat.earthdata.nasa.gov/search/*",
+                "https://search.sit.earthdata.nasa.gov/search/*"
+            ],
+            "all_frames": true,
+            "js": [
+                "lib/jquery-3.4.1.js",
+                "lib/jquery.idle/jquery.idle.js",
+                "lib/sweetalert2.min.js",
+                "lib/ua-parser.min.js",
+                "lib/popper.min.js",
+                "lib/bootstrap.min.js",
+                "js/backgroundscripts/LocalStorageManager.js",
+                "js/backgroundscripts/CMRItem.js",
+                "js/content.js"
+            ]
+        }
+    ],
     "background": {
         "scripts": [
             "lib/sweetalert2.min.js",
             "lib/ua-parser.min.js",
-            "js/localStorageManager.js",
-            "js/OAuthManager.js",
-            "js/popupManager.js",
-            "js/bg.js"
+            "js/backgroundscripts/DownloadItem.js",
+            "js/backgroundscripts/CMRItem.js",
+            "js/backgroundscripts/DownloadQueue.js",
+            "js/backgroundscripts/DownloadIterator.js",
+            "js/backgroundscripts/LocalStorageManager.js",
+            "js/backgroundscripts/CMRManager.js",
+            "js/backgroundscripts/AuthenticationManager.js",
+            "js/backgroundscripts/DownloadStats.js",
+            // "js/backgroundscripts/TestDownloadManager.js",
+            "js/backgroundscripts/DownloadManager.js",
+            "js/backgroundscripts/backgroundscript.js"
         ]
     },
     "content_security_policy": "script-src 'self'  ; object-src 'self'"

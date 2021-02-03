@@ -1,0 +1,203 @@
+@import url("https://fonts.googleapis.com/css?family=Nunito:400,900|Montserrat|Roboto");
+
+body {
+    background: linear-gradient(to right, #1f70a3, rgba(168, 166, 166, 0.925));
+    overflow-x: hidden;
+}
+.container {
+    /* background: #f9f9f9; */
+    background: #f9f9f9;
+    width: 700px;
+    height: 600px;
+    margin: 0 auto;
+    position: relative;
+    margin-top: 4%;
+    margin-bottom: 4%;
+    box-shadow: 2px 5px 20px rgba(119,119,119,.5);
+}
+.leftbox {
+    float: left;
+    top: -5%;
+    left: 5%;
+    position: absolute;
+    width: 85px;
+    height: 110%;
+    background:  #959595;
+    box-shadow:  3px 3px 10px rgba(119,119,119,.5);
+    /* border: .1em solid #fff; */
+}
+nav a {
+    list-style: none;
+    padding: 35px;
+    color: #fff;
+    font-size: 1.1em;
+    display: block;
+    transition: all .3s ease-in-out;
+}
+nav a:hover {
+    color: #10ac84;
+    cursor: pointer;
+    transform: scale(1.2);
+}
+nav a:first-child {
+    margin-top: 7px;
+}
+nav a.active {
+    color: #1f70a3;
+}
+
+.rightbox {
+    height: 100%;
+    width: 80%;
+    margin-left: 180px;
+    /* margin-right: 300px; */
+    /* margin-left: 27%; */
+    /* overflow-wrap: break-word; */
+    /* padding-right: 20px; */
+    position: relative;
+    overflow-y: auto;
+}
+
+.tabShow {
+    transition: all .5s ease-in;
+    width: 80%;
+    position: absolute;
+    /* background-color: #070707; */
+}
+h1 {
+    font-family: "Montserrat", sans-serif;
+    color: #7ed386;
+    font-size: 1.2rem;
+    margin-top: 40px;
+    margin-bottom: 35px;
+}
+h2 {
+    color: #777;
+    font-family: "Roboto", sans-serif;
+    text-transform: uppercase;
+    font-size: 8px;
+    letter-spacing: 1px;
+    margin-left: 2px;
+    margin-top: 10px;
+}
+.input {
+    border: 0;
+    border-bottom: 1px solid #3fb6a8;
+    width: 80%;
+    font-family: 'montserrat', sans-serif;
+    font-size: .7em;
+    padding: 7px 0;
+    color: #070707;
+    outline: none;
+}
+span {
+    font-size: .7em;
+    color: #777;
+}
+.btn {
+    font-family: "roboto", sans-serif;
+    text-transform: uppercase;
+    font-size: 15px;
+    border: 0;
+    color: #fff;
+    background: #7ed386;
+    padding: 7px 15px;
+    box-shadow: 0px 2px 4px 0px rgba(0,0,0,.2);
+    cursor: pointer;
+    margin-top: 15px;
+}
+.tabShow {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100%;
+    justify-content: space-between;
+}
+
+.tittle {
+    display: flex;
+    margin: 10px;
+    margin-top: 30px;
+    
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 45px;
+    font-weight: bold;
+    color: #1f70a3;
+    
+    border-bottom: 1px solid #3fb6a8;
+    
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    font-family: "roboto", sans-serif;
+    font-size: 17px;
+
+    border-bottom: 1px solid #3fb6a8;
+}
+
+.references{
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: 15px;
+    padding-top: 15px;    
+}
+
+
+#back{
+    font-size: 20px; 
+}
+
+table {
+    table-layout: fixed;
+    width: 100%;
+    margin-top: 35px;
+    border-collapse: separate;
+    border-spacing: 25px 10px;
+    /* background-color: #10ac84; */
+}
+
+td {
+    overflow: hidden;
+    font-size: 15px;
+    color: #D8000C;
+    text-overflow: ellipsis;
+    /* padding: 0 10px; */
+}
+
+tr {
+    /* display: block;*/
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    text-align:left ;
+    /* background-color: #10ac84; */
+    border-bottom: 1px solid #3fb6a8;
+
+
+}
+
+th, td {
+    /* display: flex; */
+    /* flex-direction: row; */
+    /* justify-self: flex-start; */
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+table td:hover{
+    overflow: visible;
+    white-space: unset;
+    height: auto;
+    word-wrap: break-word;
+}
+
