@@ -25,7 +25,6 @@ $(document).ready(function() {
     }
     
     if (fileURL.match(/(settings.html)/g)){
-        console.log("haha");
         errorlogs();
     }
 });
@@ -111,7 +110,6 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
         message.message == "update-popup-progress"
     ) {
         data.stats = message.data;
-        console.log(data.stats);
         updateDownloadStats(data.stats);
         errorlogs();
     }
@@ -163,7 +161,6 @@ function popup(){
                 let mainFolderName = value;
                 swal(`Downloads will be saved in the folder: ${value}`);
                 chrome.storage.sync.set({ 'mainFolderName': mainFolderName });
-                console.log(value);
             });
     });
     $(reload).click(function() {
@@ -259,12 +256,11 @@ function popup(){
     }
 
     chrome.storage.sync.get(['datasetName'], function(items) {
-        datasetName = items.datasetName;
-        if (datasetName) {
-            if (datasetName.length > 45) {
-                datasetName = datasetName.slice(0, 40) + '...';
-                document.getElementById("datasetName").innerHTML = datasetName;
-            }
+        if (!items) return;
+        let datasetName = items.datasetName;
+        if (datasetName?.length > 45) {
+            datasetName = datasetName.slice(0, 40) + '...';
+            document.getElementById("datasetName").innerHTML = datasetName;
         }
     });
 

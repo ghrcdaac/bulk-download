@@ -34,12 +34,12 @@
             ],
             "all_frames": true,
             "js": [
-                "lib/jquery-3.4.1.js",
+                "lib/jquery.min.js",
                 "lib/jquery.idle/jquery.idle.js",
                 "lib/sweetalert2.min.js",
                 "lib/ua-parser.min.js",
                 "lib/popper.min.js",
-                "lib/bootstrap.min.js",
+                "lib/bootstrap/js/bootstrap.bundle.min.js",
                 "js/backgroundscripts/LocalStorageManager.js",
                 "js/backgroundscripts/CMRItem.js",
                 "js/content.js"
@@ -58,7 +58,6 @@
             "js/backgroundscripts/CMRManager.js",
             "js/backgroundscripts/AuthenticationManager.js",
             "js/backgroundscripts/DownloadStats.js",
-            // "js/backgroundscripts/TestDownloadManager.js",
             "js/backgroundscripts/DownloadManager.js",
             "js/backgroundscripts/backgroundscript.js"
         ]

@@ -42,7 +42,7 @@ nav a:hover {
 nav a:first-child {
     margin-top: 7px;
 }
-nav a.active {
+a {
     color: #1f70a3;
 }
 
