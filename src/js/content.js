@@ -171,7 +171,6 @@ function getCmrQueryLink(url, withFilters = true) {
     if (!withFilters) {
         link = link + [1];
     }
-    console.log(link);
     return link;
 }
 
@@ -190,7 +189,6 @@ chrome.runtime.onMessage.addListener(
         if(chrome.runtime.lastError){
             console.error(chrome.runtime.lastError)
         }
-        console.log(response);
         if (response.message && response.message == "clear-swal-fire") {
             //swal.close();
             sendResponse({
@@ -277,7 +275,6 @@ function appendBulkDownloadButton() {
 
         $("#newBulkDownloadButton").click(function openWin() {
             
-            console.log(getCmrQueryLink(window.location.href))
             try {
                 let env = null;
                 if(window.location.href.includes("https://search.uat.")){
@@ -318,10 +315,9 @@ function appendBulkDownloadButton() {
 function createButtonGroup(){
 
     function createDropDownButton(parentContainer) {
-        console.log('create button');
         const dropDownContainer = $("<div class='dropdown'></div>");
     
-        const button = $("<button class='button button--full button--icon button--badge granule-results-actions__download-all-button btn btn-success dropdown-toggle' data-toggle='dropdown'></button>").attr({
+        const button = $("<button class='button button--full button--icon button--badge granule-results-actions__download-all-button btn btn-success dropdown-toggle' data-bs-toggle='dropdown'></button>").attr({
             id: "dropDownButton"
         });
         button.css({ height: '100%' });
@@ -348,8 +344,6 @@ function createButtonGroup(){
     
     //append the new button in drop downl menu
     if(!document.getElementById('dropDownButton')){
-        console.log("let's see}");
-        console.log('create button');
         createDropDownButton($(".granule-results-actions")).append(button);
     }
 

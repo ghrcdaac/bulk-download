@@ -3,13 +3,13 @@
 <head>
     <title>Popup</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-    <script type="text/javascript" src="../lib/jquery-3.4.1.js"></script>
+    <script type="text/javascript" src="../lib/jquery.min.js"></script>
     <link href="../lib/fontawesome/css/all.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="popup.css" />
-    <script type="text/javascript" src="../lib/fontawesome.js"></script>
+    <script type="text/javascript" src="../lib/fontawesome/js/fontawesome.js"></script>
     <script type="text/javascript" src="../lib/sweetalert.min.js"></script>
     <script type="text/javascript" src="../lib/popper.min.js"></script>
-    <script type="text/javascript" src="../lib/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../lib/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script type="text/javascript" src="popup.js"></script>
 
     <meta charset="utf-8" />
@@ -29,8 +29,8 @@
                 </div>
 
 
-                <div title="Folder settings" class="btn-group dropleft" style="text-align: right;">
-                    <button type="button" id="folder-settings" class="btn" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <div title="Folder settings" class="btn-group dropstart" style="text-align: right;">
+                    <button type="button" id="folder-settings" class="btn" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-cog"></i>
                     </button>
                     <div class="dropdown-menu">
@@ -40,7 +40,7 @@
                             downloads</a>
                         <a class="dropdown-item" href="#" id="clearPopup"><i class="fas fa-broom"></i> Clear pop-up</a>
                         <a class="dropdown-item" href="#" id="aboutUs"><i class="fas fa-info"></i> &nbsp &nbsp About Us</a>
-                        <a class="dropdown-item" href="#" id="reload"><i class="fa fa-refresh"></i> &nbsp Reload</a>
+                        <a class="dropdown-item" href="#" id="reload"><i class="fas fa-redo-alt"></i> &nbsp Reload</a>
                         
                         <!-- <a class="dropdown-item" href="#" id="errorlog"><i class="fal fa-exclamation-triangle"></i></i> Error Logs</a> -->
                     </div>

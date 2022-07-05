@@ -58,7 +58,7 @@ class DownloadStats{
 
         if(delta.state.current == "complete" || 
             (delta.state.current == "interrupted" &&
-            delta.error.current != "USER_CANCELED")
+            delta?.error?.current != "USER_CANCELED")
         ){
             this.data.jobCount +=1;
         }
@@ -69,7 +69,7 @@ class DownloadStats{
             
         }else if(delta.state.current == "interrupted"){
 
-           if(delta.error.current != "USER_CANCELED"){
+           if(delta?.error?.current != "USER_CANCELED"){
                 this.data.interrupted += 1;
                 this.data.failed.push(delta);
             }
@@ -90,9 +90,9 @@ class DownloadStats{
 
         if(
             delta.state.current == "interrupted" &&
-            delta.error.current != "USER_CANCELED"
+            delta?.error?.current != "USER_CANCELED"
         ){
-            if (this.disconnectedErrors.has(delta.error.current)){
+            if (this.disconnectedErrors.has(delta?.error?.current)){
                 this.fireCustomBDStatsEvent({
                     event: 'disconnected',
                     interruptionReason: delta.state.current
