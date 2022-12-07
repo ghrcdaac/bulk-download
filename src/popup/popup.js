@@ -36,13 +36,14 @@ function updateProgressBar(progress) {
 }
 
 function updateDownloadStats(stats){
-
     const fileURL = document.URL;
     if(fileURL.substring(fileURL.lastIndexOf('/') + 1) == "popup.html"){
         document.getElementById("pendingCount").innerHTML = stats.in_progress;
         document.getElementById("finishedCount").innerHTML = stats.completed;
         document.getElementById("failedCount").innerHTML = stats.interrupted;
-        updateProgressBar(stats.progress);
+        document.getElementById("datasetName").innerHTML = stats.name;
+        if(stats.in_progress + stats.completed + stats.interrupted != stats.totalNoofFiles) updateProgressBar(0);
+        else updateProgressBar(stats.progress);
         updateErrorLogLink();
     }
 }
@@ -104,6 +105,14 @@ function resetPopup(){
     updateErrorLogLink(true);
 }
 
+function resetPopupCancel(){
+    chrome.runtime.sendMessage({
+        message: "update-popup-cancel",
+        action: "reset-popup-cancel"
+    })
+    updateErrorLogLink(true);
+}
+
 chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
     if (
         typeof(message) === "object" &&
@@ -116,9 +125,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendMessage) {
 });
 
 function popup(){
-
     updateErrorLogLink();
-
     $("#cancel").click(function() {
         // chrome.runtime.sendMessage({ message: "cancel-download" });
         chrome.runtime.sendMessage({ message: "pause-download" });
@@ -222,13 +229,13 @@ function popup(){
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
                 buttons: {
-                    red: {
-                        text: "OK, Cancel",
-                        value: "cancel"
-                    },
                     green: {
                         text: "Resume Downloads",
                         value: "resume"
+                    },
+                    red: {
+                        text: "OK, Cancel",
+                        value: "cancel"
                     }
                 },
             })
@@ -241,10 +248,18 @@ function popup(){
                         icon: "success",
                     })
                 }
-                if (value == "cancel") {
+                else if (value == "cancel") {
                     // data.stats.progress = 0;
-                    updateProgressBar(data.stats.progress);
+                    updateProgressBar(0);
+                    resetPopupCancel();
                     chrome.runtime.sendMessage({ message: "cancel-download" });
+                    updateProgressBar(0);
+                    chrome.storage.sync.set({ 'datasetName': clearDatasetName });
+                    document.getElementById("datasetName").innerHTML = clearDatasetName;
+                    document.getElementById("pendingCount").innerHTML = '0';
+                    document.getElementById("finishedCount").innerHTML = stats.completed;
+                    document.getElementById("failedCount").innerHTML = stats.interrupted;
+                    resetPopup();
                     swal({
                         title: "Cancelled!",
                         text: "Your downloads have been cancelled!",
@@ -255,14 +270,18 @@ function popup(){
     
     }
 
-    chrome.storage.sync.get(['datasetName'], function(items) {
-        if (!items) return;
-        let datasetName = items.datasetName;
-        if (datasetName?.length > 45) {
-            datasetName = datasetName.slice(0, 40) + '...';
-            document.getElementById("datasetName").innerHTML = datasetName;
-        }
-    });
+
+
+    // chrome.storage.sync.get(['datasetName'], function(items) {
+    //     console.log('obj',items);
+    //     if (!items) return;
+    //     let datasetName = items.datasetName;
+    //     if (datasetName && datasetName.length > 45) {
+    //         datasetName = datasetName.slice(0, 40) + '...';
+    //         document.getElementById("datasetName").innerHTML = datasetName;
+    //     }
+    //         document.getElementById("datasetName").innerHTML = datasetName;
+    // });
 
     // async function changeButtons(){
 

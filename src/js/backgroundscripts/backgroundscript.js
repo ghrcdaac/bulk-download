@@ -100,6 +100,12 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) =>{
     } else if (request.message == "cmr"){
         downloadData.cmrUrl = request.url;
         fetchLinks(request.url, request.noOfGranules);
+    }else if (request.message == "update-popup-cancel") {
+        if (downloadManager.stats) {
+          if(request.action && request.action == "reset-popup-cancel"){
+                downloadManager.stats.resetCancel(true);
+            }
+        }
     }
 
 });

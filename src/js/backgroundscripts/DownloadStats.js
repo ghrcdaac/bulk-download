@@ -10,7 +10,8 @@ class DownloadStats{
             failed:[],
             jobCount: 0,
             jobIndex: 0,
-            jobs: []
+            jobs: [],
+            name: ''
         }
         this.disconnectedErrors = new Set([
             "NETWORK_FAILED",
@@ -74,7 +75,6 @@ class DownloadStats{
                 this.data.failed.push(delta);
             }
         }
-
         this.updatePending();
         this.calcProgess();
         this.postPogress();
@@ -126,6 +126,7 @@ class DownloadStats{
     }
 
     countDownloads(delta){
+        if(delta.filename) this.data.name = delta.filename.current.split("\\").pop();
         this.calculateStats(delta);
         this.observeDownloadEvents(delta);
     }
@@ -198,9 +199,30 @@ class DownloadStats{
             failed:[],
             jobCount: 0,
             jobIndex: 0,
-            jobs: []
+            jobs: [],
+            name:''
         }
         
     }
+
+    resetCancel(){
+
+        // chrome.downloads.onChanged.removeListener(() => this.countDownloads);
+
+        this.data = {
+            totalNoofFiles: this.data.totalNoofFiles,
+            completed: this.data.completed,
+            in_progress: 0,
+            interrupted: this.data.interrupted,
+            progress: this.data.progress,
+            failed: this.data.failed,
+            jobCount: this.data.jobCount,
+            jobIndex: this.data.jobIndex,
+            jobs: this.data.jobs,
+            name: this.data.name
+        }
+
+    }
+
     
 }

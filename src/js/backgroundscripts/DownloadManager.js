@@ -340,7 +340,7 @@ class DownloadManager{
                     }
                     
     
-                }, 700);
+                }, 2000);
             
             
 
@@ -402,7 +402,7 @@ class DownloadManager{
         try {
             //stop further downloads
             const self = this;
-            clearInterval(self.downloadInterval);
+         //   clearInterval(self.downloadInterval);
 
             this.itr.updateLastActionItr();
             this.lastAction = 'pause';
@@ -437,8 +437,7 @@ class DownloadManager{
 
         //need to think about how to store download Stats
         //without losing data
-
-        if(this.lastAction !== 'pause'){
+        if(this.lastAction && this.lastAction !== 'pause'){
             return;
         }
 
@@ -459,7 +458,7 @@ class DownloadManager{
 
             this.setState('ongoing');
 
-            // this.downloadAll(true);   
+             this.downloadAll(true);
         } catch (error) {
             console.error(error);
             throw error;
