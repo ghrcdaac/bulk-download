@@ -35,15 +35,35 @@ function updateProgressBar(progress) {
     element.innerHTML = parseInt(progress) + '%';
 }
 
+let arrList = '';
 function updateDownloadStats(stats){
+    $("#heartbeat").css("color", "red");
+
+    //$("#dot").prop('title', 'Download Ready');
     const fileURL = document.URL;
     if(fileURL.substring(fileURL.lastIndexOf('/') + 1) == "popup.html"){
-        document.getElementById("pendingCount").innerHTML = stats.in_progress;
-        document.getElementById("finishedCount").innerHTML = stats.completed;
+
+        document.getElementById("pendingCount").innerHTML = stats.in_progress < 0 ? 0: stats.in_progress;
+        document.getElementById("finishedCount").innerHTML = stats.in_progress < 0 ? 0: stats.completed;
         document.getElementById("failedCount").innerHTML = stats.interrupted;
-        document.getElementById("datasetName").innerHTML = stats.name;
-        if(stats.in_progress + stats.completed + stats.interrupted != stats.totalNoofFiles) updateProgressBar(0);
-        else updateProgressBar(stats.progress);
+        arrList = arrList.concat("\n"  + stats.name);
+        document.getElementById("datasetName").innerHTML = stats.in_progress < 0 ? "" : stats.name;
+
+        if(stats.in_progress == 0 && (stats.interrupted != 0 || stats.completed != 0)){
+            //document.getElementById("downloadStatus").innerHTML = "Download Completed";
+            $("#heartbeat").css("color", "red");
+            $("#dot").prop('title', 'Download Canceled/Completed');
+        }
+
+        if(stats.in_progress + stats.completed + stats.interrupted != stats.totalNoofFiles) {
+            updateProgressBar(0);
+            $("#heartbeat").css("color", "red");
+            $("#dot").prop('title', 'Download Canceled/Completed');
+        }
+        else {
+            $("#heartbeat").css("color", "green");
+            updateProgressBar(stats.progress);
+        }
         updateErrorLogLink();
     }
 }
@@ -59,6 +79,20 @@ function updatePopup() {
     }
 
 }
+
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
+
 
 function updateErrorLogLink(override = false){
     if(override || data.stats.failed.length === 0){
@@ -98,10 +132,15 @@ function updateErrorLogLink(override = false){
 }
 
 function resetPopup(){
+    var text = arrList;
+    var filename = "Files_Downloaded.txt";
+    download(filename, text);
+
     chrome.runtime.sendMessage({
         message: "update-popup",
         action: "reset-popup"
     })
+
     updateErrorLogLink(true);
 }
 
@@ -129,12 +168,15 @@ function popup(){
     $("#cancel").click(function() {
         // chrome.runtime.sendMessage({ message: "cancel-download" });
         chrome.runtime.sendMessage({ message: "pause-download" });
+        document.getElementById("downloadStatus").innerHTML = "";
         cancelConfirmation();
     });
     $("#pause").click(function() {
+        document.getElementById("downloadStatus").innerHTML = "Download Paused";
         chrome.runtime.sendMessage({ message: "pause-download" });
     });
     $("#resume").click(function() {
+        document.getElementById("downloadStatus").innerHTML = "Download Resumed";
         chrome.runtime.sendMessage({ message: "resume-download" });
     });
     $("#retry").click(function(){
@@ -210,6 +252,7 @@ function popup(){
         document.getElementById("pendingCount").innerHTML = '0';
         document.getElementById("finishedCount").innerHTML = '0';
         document.getElementById("failedCount").innerHTML = '0';
+        document.getElementById("downloadStatus").innerHTML = "";
         updateProgressBar(0);
         resetPopup();
     });
@@ -252,6 +295,8 @@ function popup(){
                     // data.stats.progress = 0;
                     updateProgressBar(0);
                     resetPopupCancel();
+                    $("#heartbeat").css("color", "red");
+                    $("#dot").prop('title', 'Download Canceled/Completed');
                     chrome.runtime.sendMessage({ message: "cancel-download" });
                     updateProgressBar(0);
                     chrome.storage.sync.set({ 'datasetName': clearDatasetName });
@@ -260,6 +305,7 @@ function popup(){
                     document.getElementById("finishedCount").innerHTML = stats.completed;
                     document.getElementById("failedCount").innerHTML = stats.interrupted;
                     resetPopup();
+
                     swal({
                         title: "Cancelled!",
                         text: "Your downloads have been cancelled!",
