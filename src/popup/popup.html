@@ -52,6 +52,7 @@
 
             <div class="dataset-name" id="datasetName">No Downloads in Progress</div>
             <hr>
+            <span class= "downloadStatus" id="downloadStatus"></span>
             <div class="buttons">
                 <button title="Pause all downloads" type="button" class="btn " id="pause">
                     <i class="far fa-pause-circle"> </i>
@@ -64,7 +65,6 @@
                 <button title="Cancel all downloads" type="button" class="btn " id="cancel">
                     <i class="far fa-times-circle"> </i>
                 </button>
-                
                 <!-- <button title="Retry all downloads" type="button" class="btn " id="retry">
                     <i class="fas fa-undo"> </i>
                 </button> -->
@@ -77,6 +77,7 @@
         </div>
     </div>
     <div id="footer">
+        <span id="heartbeat"><i class="far fa-dot-circle" id="dot"></i> </span>
         Pending: <span class="granule-count" id="pendingCount">0</span> | 
         Completed: <span class="granule-count" id="finishedCount">0</span> | 
         <a id="errorLogLink">Failed: <span class="granule-count" id="failedCount">0</span></a>
