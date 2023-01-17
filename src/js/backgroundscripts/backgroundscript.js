@@ -15,6 +15,11 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) =>{
     }
     
     request.message = request.message.toLowerCase();
+
+    if(request.message == 'setname'){
+        downloadManager.setName(request.value);
+    }
+
     if (typeof(request) !== "object") {
         console.error(request, "is not of type object");
         sendResponse({
@@ -26,7 +31,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) =>{
 
     if (request.message == "start-download") {
         downloadManager.init(request);
-        
+
     } else if (request.message == "cancel-download") {
         downloadManager.cancelAll();
     } else if (request.message == "pause-download") {

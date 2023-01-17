@@ -47,7 +47,7 @@ function updateDownloadStats(stats){
         document.getElementById("finishedCount").innerHTML = stats.in_progress < 0 ? 0: stats.completed;
         document.getElementById("failedCount").innerHTML = stats.interrupted;
         arrList = arrList.concat("\n"  + stats.name);
-        document.getElementById("datasetName").innerHTML = stats.in_progress < 0 ? "" : stats.name;
+        document.getElementById("datasetName").innerHTML = stats.in_progress < 0 ? "" : stats.name.substring(0, 30);
 
         if(stats.in_progress == 0 && (stats.interrupted != 0 || stats.completed != 0)){
             //document.getElementById("downloadStatus").innerHTML = "Download Completed";
@@ -209,7 +209,8 @@ function popup(){
             .then((value) => {
                 let mainFolderName = value;
                 swal(`Downloads will be saved in the folder: ${value}`);
-                chrome.storage.sync.set({ 'mainFolderName': mainFolderName });
+               // chrome.storage.sync.set({ 'mainFolderName': mainFolderName });
+                chrome.runtime.sendMessage({message:"setName",value:mainFolderName});
             });
     });
     $(reload).click(function() {

@@ -17,7 +17,7 @@ class DownloadManager{
         this.downloadInterval = null;
         this.lastAction = null;
         this.states = new Set(['idle', 'paused', 'ongoing', 'disconnected', 'canceled']);
-
+        this.folderName = 'Earthdata-BulkDownloads';
         this.stats = new DownloadStats();
         this.itr = new DownloadIterator();
         this.queue = new DownloadQueue();
@@ -254,8 +254,8 @@ class DownloadManager{
             const filename = downloadItem.url.substring(
                 downloadItem.url.lastIndexOf('/') + 1);
 
-            const path = "Earthdata-BulkDownloads/" + filename;
-
+            var path = "Earthdata-BulkDownloads/" + filename;
+            path = this.folderName +"/"+filename;
 
             chrome.downloads.download({
                 url: downloadItem.url,
@@ -580,5 +580,9 @@ class DownloadManager{
             new CMRItem(request.url, request.noOfGranules));
         await this.authenticate();
         this.initDownload();
+    }
+
+    setName(name) {
+        this.folderName = name;
     }
 }
