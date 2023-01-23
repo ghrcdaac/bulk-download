@@ -4,7 +4,7 @@ class DownloadManager{
         this.endOfQueue = false;
         this.batchComplete = false;
         this.onGoing = false;
-
+        this.arrList = '';
         this.cancelData = {
             cancelByCancelAll: false,
             cancelByCallback: false,
@@ -251,7 +251,7 @@ class DownloadManager{
                 throw new Error("TypeError");
             }
 
-            const filename = downloadItem.url.substring(
+            const filename = downloadItem.dataset_id +"/"+downloadItem.url.substring(
                 downloadItem.url.lastIndexOf('/') + 1);
 
             var path = "Earthdata-BulkDownloads/" + filename;
@@ -307,6 +307,19 @@ class DownloadManager{
         }
     }
 
+     downloadFiles(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+
+        document.body.removeChild(element);
+    }
+
+
     async downloadAll(resume=false){
 
         this.lastAction = 'download';
@@ -333,6 +346,7 @@ class DownloadManager{
                         }
         
                         const downloadItem = this.queue.downloadItems.pop();
+                        if(downloadItem && downloadItem.url) this.arrList = this.arrList.concat("\n"  + downloadItem.url.substring(downloadItem.url.lastIndexOf('/')+1));
                         downloadItem.id = this.itr.increment();
                         this.download(downloadItem);
                     } catch (error) {
@@ -500,7 +514,7 @@ class DownloadManager{
     }
 
     onEndOfQueue(){
-        this.endOfQueue = true;                
+        this.endOfQueue = true;
         if(this.batchComplete){
             try {
                 this.endOfQueue = false;
@@ -536,6 +550,10 @@ class DownloadManager{
         this.setState('idle');
         // this.lastAction = null;
         // this.onGoing = false;
+        if (this.arrList != '') {
+            this.downloadFiles('Files_Downloaded',this.arrList)
+            this.arrList = '';
+        }
     }
 
     onCancelComplete(){
