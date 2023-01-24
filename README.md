@@ -32,10 +32,21 @@ Step 1:
 - Clone the git repository to your local desktop
 https://github.com/ghrcdaac/bulk-download.git
 
-or
+**or**
+
 ![1](https://user-images.githubusercontent.com/109820220/214403792-b5c34629-b928-4163-9964-8a019ff82f16.png)
 
+**Warning:** Make sure you have git installed on your local machine to clone it from the
+command prompt. If not, can be installed from the link: https://git-scm.com/download/win
+
+
 Step 2:
+
+Locate the git cloned folder(must be in the Downloads folder). It is a zip file with the name
+“bulk-download-master@dd8331ec68b.zip”. Unzip the folder and check if it has a folder
+structure with a “manifest.json” file in src folder as shown below
+
+![2](https://user-images.githubusercontent.com/109820220/214407846-70216b8b-7690-4742-a7e5-1c2adcbbc6e6.PNG)
 
 - Open a web browser,
     - if Google Chrome, open chrome://extensions/
