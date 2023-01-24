@@ -28,12 +28,21 @@ This has the styling code css trick for the borders of pause and play buttons to
 These have the images with .png extension to be used for the icons of the browser extension.
 
 #### How to Run:
+Step 1:
 - Clone the git repository to your local desktop
+https://github.com/ghrcdaac/bulk-download.git
+
+or
+![1](https://user-images.githubusercontent.com/109820220/214403792-b5c34629-b928-4163-9964-8a019ff82f16.png)
+
+Step 2:
+
 - Open a web browser,
     - if Google Chrome, open chrome://extensions/
         - Switch on the Developer mode on the top right corner of the page
         - Click on load unpacked and browse the git cloned folder and select src and click on "Select Folder"
         - Now open Earth Data website in a new page, select the dataset and Click on Bulk Download now
+        - 
     - if Firefox, open about:debugging
          - Click on load temporary add-on, navigate to src folder and open the manifest file
          - Now open Earth Data website in a new page, select the dataset and Click on Bulk Download now
