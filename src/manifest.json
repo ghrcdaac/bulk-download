@@ -62,5 +62,13 @@
             "js/backgroundscripts/backgroundscript.js"
         ]
     },
-    "content_security_policy": "script-src 'self'  ; object-src 'self'"
+    "content_security_policy": "script-src 'self'  ; object-src 'self'",
+    "commands": {
+        "_execute_browser_action": {
+            "suggested_key": {
+                "default": "Alt + Shift + D"
+            }
+        }
+    }
+
 }
