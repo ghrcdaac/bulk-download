@@ -551,7 +551,7 @@ class DownloadManager{
         // this.lastAction = null;
         // this.onGoing = false;
         if (this.arrList != '') {
-            this.downloadFiles('Files_Downloaded',this.arrList)
+            this.downloadFiles('Files_Downloaded.txt',this.arrList)
             this.arrList = '';
         }
     }

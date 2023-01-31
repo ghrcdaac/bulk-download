@@ -125,7 +125,7 @@ class CMRManager{
                 }
 
                 for (let i = 0; i < entries.length; i++) {
-                    cmrLinks[i] = new DownloadItem(entries[i].links[0].href);
+                    cmrLinks[i] = new DownloadItem(entries[i].links[0].href, entries[i].dataset_id);
                 
                 }
 

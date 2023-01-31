@@ -11,7 +11,8 @@ class DownloadStats{
             jobCount: 0,
             jobIndex: 0,
             jobs: [],
-            name: ''
+            name: '',
+            granuleDatasetName:''
         }
         this.disconnectedErrors = new Set([
             "NETWORK_FAILED",
@@ -126,7 +127,7 @@ class DownloadStats{
     }
 
     countDownloads(delta){
-        if(delta.filename) this.data.name = delta.filename.current.split("\\").pop();
+        if(delta.filename) this.data.name = delta.filename.current;
         this.calculateStats(delta);
         this.observeDownloadEvents(delta);
     }
