@@ -55,9 +55,18 @@ structure with a “manifest.json” file in src folder as shown below
         - Now open Earth Data website in a new page, select the dataset and Click on Bulk Download now
         - 
     - if Firefox, open about:debugging
+        ![f_1](https://user-images.githubusercontent.com/109820220/215814508-4938ad46-a4a3-4045-b6f9-84434b9067a1.PNG)
+    
          - Click on load temporary add-on, navigate to src folder and open the manifest file
+
+         ![f_2](https://user-images.githubusercontent.com/109820220/215814704-098450a0-fafc-4bd7-ad7a-bb65c3e048c1.PNG)
+
          - Now open Earth Data website in a new page, select the dataset and Click on Bulk Download now
 
+        Warning: Please do not close the “about:debugging” page in Firefox during testing. Kindly
+use a new tab for Earthdata Website. (Once the firefox browser is closed, since the
+add-on is a temporary extension for developers, it gets deleted. This is not the case for
+the Chrome browser though.)
 
 
 
