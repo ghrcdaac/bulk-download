@@ -5,7 +5,8 @@ let data = {
         in_progress: 0,
         interrupted: 0,
         progress: 0,
-        failed: []
+        failed: [],
+        granuleDatasetName: ''
     },
     loggedErrors: {},
     state: "idle"
@@ -35,6 +36,18 @@ function updateProgressBar(progress) {
     element.innerHTML = parseInt(progress) + '%';
 }
 
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+
+    document.body.removeChild(element);
+}
+
 let arrList = '';
 function updateDownloadStats(stats){
     $("#heartbeat").css("color", "red");
@@ -47,7 +60,10 @@ function updateDownloadStats(stats){
         document.getElementById("finishedCount").innerHTML = stats.in_progress < 0 ? 0: stats.completed;
         document.getElementById("failedCount").innerHTML = stats.interrupted;
         arrList = arrList.concat("\n"  + stats.name);
-        document.getElementById("datasetName").innerHTML = stats.in_progress < 0 ? "" : stats.name.substring(0, 30);
+
+
+        document.getElementById("datasetName").innerHTML = stats.in_progress < 0 ? "" : stats.name.split("\\").pop().substring(0, 35);
+        document.getElementById("datasetName2").innerHTML = stats.in_progress < 0 ? "" : stats.name.split("\\").splice(-2,1)[0].substring(0, 35);
 
         if(stats.in_progress == 0 && (stats.interrupted != 0 || stats.completed != 0)){
             //document.getElementById("downloadStatus").innerHTML = "Download Completed";
@@ -62,9 +78,10 @@ function updateDownloadStats(stats){
         }
         else {
             $("#heartbeat").css("color", "green");
+            if(stats.progress > 100) stats.progress = 100;
             updateProgressBar(stats.progress);
         }
-        updateErrorLogLink();
+            updateErrorLogLink();
     }
 }
 
@@ -78,19 +95,6 @@ function updatePopup() {
         });
     }
 
-}
-
-function download(filename, text) {
-    var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-    element.setAttribute('download', filename);
-
-    element.style.display = 'none';
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
 }
 
 
@@ -260,6 +264,11 @@ function popup(){
     $(aboutUs).click(function() {
         chrome.runtime.openOptionsPage()
     })
+
+    document.getElementById('hotkey').onclick = () => chrome.tabs.create({
+        url: 'chrome://extensions/configureCommands'
+    });
+
     $("#searchBar").on("keyup", function() {
         var value = $(this).val().toLowerCase();
         $("#datasetName").filter(function() {
